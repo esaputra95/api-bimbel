@@ -1,0 +1,414 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model brands {
+  id          String     @id @db.VarChar(36)
+  storeId     String?    @db.VarChar(36)
+  name        String     @db.VarChar(50)
+  description String?    @db.VarChar(255)
+  userCreate  String?    @db.VarChar(36)
+  createdAt   DateTime?  @default(now()) @db.DateTime(0)
+  updatedAt   DateTime?  @default(now()) @db.DateTime(0)
+  deletedAt   DateTime?  @db.DateTime(0)
+  stores      stores?    @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "brandStore")
+  users       users?     @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "brandUser")
+  products    products[]
+
+  @@index([storeId], map: "brandStore")
+  @@index([userCreate], map: "brandUser")
+}
+
+model categories {
+  id          String     @id @db.VarChar(36)
+  storeId     String?    @db.VarChar(36)
+  name        String     @db.VarChar(50)
+  description String?    @db.VarChar(255)
+  userCreate  String?    @db.VarChar(36)
+  createdAt   DateTime?  @default(now()) @db.DateTime(0)
+  updatedAt   DateTime?  @default(now()) @db.DateTime(0)
+  deletedAt   DateTime?  @db.DateTime(0)
+  stores      stores?    @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "categoriStore")
+  users       users?     @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "categoriUser")
+  products    products[]
+
+  @@index([storeId], map: "categoriStore")
+  @@index([userCreate], map: "categoriUser")
+}
+
+model memberLevels {
+  id         String    @id @db.VarChar(36)
+  storeId    String?   @db.VarChar(36)
+  name       String    @db.VarChar(100)
+  level      Int       @db.SmallInt
+  userCreate String?   @db.VarChar(36)
+  createdAt  DateTime? @default(now()) @db.DateTime(0)
+  updatedAt  DateTime? @default(now()) @db.DateTime(0)
+  deletedAt  DateTime? @db.DateTime(0)
+  stores     stores?   @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "memberLevelStore")
+  users      users     @relation(fields: [id], references: [id], onUpdate: Restrict, map: "memberLevelUser")
+  members    members[]
+
+  @@index([storeId], map: "memberLevelStore")
+  @@index([userCreate], map: "userCreate")
+}
+
+model members {
+  id            String       @id @db.VarChar(36)
+  storeId       String?      @db.VarChar(36)
+  memberLevelId String       @db.VarChar(36)
+  name          String       @db.VarChar(150)
+  phone         String?      @db.VarChar(16)
+  address       String?      @db.Text
+  userCreate    String?      @db.VarChar(36)
+  createdAt     DateTime?    @default(now()) @db.DateTime(0)
+  updatedAt     DateTime?    @default(now()) @db.DateTime(0)
+  deletedAt     DateTime?    @db.DateTime(0)
+  memberLevels  memberLevels @relation(fields: [memberLevelId], references: [id], onUpdate: Restrict, map: "memberLevel")
+  stores        stores?      @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "memberStore")
+  users         users?       @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "memberUser")
+  sales         sales[]
+
+  @@index([memberLevelId], map: "memberLevel")
+  @@index([storeId], map: "memberStore")
+  @@index([userCreate], map: "memberUser")
+}
+
+model productConversions {
+  id              String            @id @db.VarChar(36)
+  productId       String            @db.VarChar(36)
+  unitId          String            @db.VarChar(36)
+  quantity        Int               @default(1)
+  status          Int?              @default(1) @db.SmallInt
+  userCreate      String?           @db.VarChar(36)
+  createdAt       DateTime?         @default(now()) @db.DateTime(0)
+  updatedAt       DateTime?         @default(now()) @db.DateTime(0)
+  deletedAt       DateTime?         @db.DateTime(0)
+  products        products          @relation(fields: [productId], references: [id], onDelete: Cascade, map: "productConversionProduct")
+  units           units             @relation(fields: [unitId], references: [id], onUpdate: Restrict, map: "productConversionUnit")
+  users           users?            @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "productConversionUser")
+  productVariants productVariants[]
+
+  @@index([productId], map: "productConversionProduct")
+  @@index([unitId], map: "productConversionUnit")
+  @@index([userCreate], map: "productConversionUser")
+}
+
+model productVariants {
+  id                 String             @id @db.VarChar(36)
+  variantId          String             @db.VarChar(36)
+  conversionId       String             @db.VarChar(36)
+  price              Decimal?           @db.Decimal(14, 4)
+  userCreate         String?            @db.VarChar(36)
+  createdAt          DateTime?          @default(now()) @db.DateTime(0)
+  updatedAt          DateTime?          @default(now()) @db.DateTime(0)
+  deletedAt          DateTime?          @db.DateTime(0)
+  productConversions productConversions @relation(fields: [conversionId], references: [id], onDelete: Cascade, map: "productVariantConversion")
+  users              users?             @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "productVariantUser")
+  variants           variants           @relation(fields: [variantId], references: [id], onUpdate: Restrict, map: "productVariantVariant")
+
+  @@index([conversionId], map: "productVariantConversion")
+  @@index([userCreate], map: "productVariantUser")
+  @@index([variantId], map: "productVariantVariant")
+}
+
+model products {
+  id                 String                    @id @db.VarChar(36)
+  storeId            String?                   @db.VarChar(36)
+  categoriId         String                    @db.VarChar(36)
+  brandId            String                    @db.VarChar(36)
+  code               String?                   @db.VarChar(50)
+  name               String                    @db.VarChar(255)
+  hppType            String?                   @db.VarChar(15)
+  taxInclude         Int?                      @db.SmallInt
+  stockMinimum       Int?
+  description        String?                   @db.Text
+  status             products_status?          @default(active)
+  image              String?                   @db.Text
+  type               products_type?
+  consignment        Int?
+  consignmentType    products_consignmentType?
+  userCreate         String?                   @db.VarChar(36)
+  createdAt          DateTime?                 @default(now()) @db.DateTime(0)
+  updatedAt          DateTime?                 @default(now()) @db.DateTime(0)
+  deletedAt          DateTime?                 @db.DateTime(0)
+  productConversions productConversions[]
+  brands             brands                    @relation(fields: [brandId], references: [id], onUpdate: Restrict, map: "productBrand")
+  categories         categories                @relation(fields: [categoriId], references: [id], onUpdate: Restrict, map: "productCategori")
+  stores             stores?                   @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "productStore")
+  users              users?                    @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "productUser")
+  purchaseDetails    purchaseDetails[]
+  saleDetails        saleDetails[]
+
+  @@index([brandId], map: "productBrand")
+  @@index([categoriId], map: "productCategori")
+  @@index([storeId], map: "productStore")
+  @@index([userCreate], map: "productUser")
+}
+
+model purchaseDetails {
+  id            String    @id @db.VarChar(36)
+  purchaseId    String    @db.VarChar(36)
+  productId     String    @db.VarChar(36)
+  variantId     String?   @db.VarChar(36)
+  quantityOrder Decimal?  @db.Decimal(14, 4)
+  quantity      Decimal?  @db.Decimal(14, 4)
+  price         Decimal?  @db.Decimal(14, 4)
+  discount      Decimal?  @db.Decimal(14, 4)
+  total         Decimal?  @db.Decimal(14, 4)
+  expiredDate   DateTime? @db.Date
+  userCreate    String?   @db.VarChar(36)
+  createdAt     DateTime? @default(now()) @db.DateTime(0)
+  updatedAt     DateTime? @default(now()) @db.DateTime(0)
+  deletedAt     DateTime? @db.DateTime(0)
+  products      products  @relation(fields: [productId], references: [id], onUpdate: Restrict, map: "purchaseDetailProduct")
+  purchases     purchases @relation(fields: [purchaseId], references: [id], onDelete: Cascade, map: "purchaseDetailPurchase")
+  users         users?    @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "purchaseDetailUser")
+  variants      variants? @relation(fields: [variantId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "purchaseDetailVariant")
+
+  @@index([productId], map: "purchaseDetailProduct")
+  @@index([purchaseId], map: "purchaseDetailPurchase")
+  @@index([userCreate], map: "purchaseDetailUser")
+  @@index([variantId], map: "purchaseDetailVariant")
+}
+
+model purchases {
+  id                   String            @id @db.VarChar(36)
+  storeId              String?           @db.VarChar(36)
+  supplierId           String            @db.VarChar(36)
+  purchaseOrderId      String?           @db.VarChar(36)
+  date                 DateTime          @db.Date
+  invoice              String            @db.VarChar(100)
+  subTotal             Decimal?          @db.Decimal(14, 4)
+  tax                  Decimal?          @db.Decimal(14, 4)
+  discount             Decimal?          @db.Decimal(14, 4)
+  addtionalCost        Decimal?          @db.Decimal(14, 4)
+  total                Decimal?          @db.Decimal(14, 4)
+  downPayment          Decimal?          @db.Decimal(14, 4)
+  payCash              Decimal?          @db.Decimal(14, 4)
+  payCredit            Decimal?          @db.Decimal(14, 4)
+  payMetodeId          String?           @db.VarChar(36)
+  accountCashId        String?           @db.VarChar(36)
+  accountDebitId       String?           @db.VarChar(36)
+  accountCreditId      String?           @db.VarChar(36)
+  accountDownPaymentId String?           @db.VarChar(36)
+  userCreate           String?           @db.VarChar(36)
+  createdAt            DateTime?         @default(now()) @db.DateTime(0)
+  updatedAt            DateTime?         @default(now()) @db.DateTime(0)
+  deletedAt            DateTime?         @db.DateTime(0)
+  purchaseDetails      purchaseDetails[]
+  stores               stores?           @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "purchaseStore")
+  suppliers            suppliers         @relation(fields: [supplierId], references: [id], onUpdate: Restrict, map: "purchaseSupplier")
+  users                users?            @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "purchaseUser")
+
+  @@index([storeId], map: "purchaseStore")
+  @@index([supplierId], map: "purchaseSupplier")
+  @@index([userCreate], map: "purchaseUser")
+}
+
+model saleDetails {
+  id            String              @id @db.VarChar(36)
+  saleId        String              @db.VarChar(36)
+  productId     String              @db.VarChar(36)
+  variantId     String?             @db.VarChar(36)
+  quantityOrder Decimal?            @db.Decimal(14, 4)
+  quantity      Decimal?            @db.Decimal(14, 4)
+  price         Decimal?            @db.Decimal(14, 4)
+  discount      Decimal?            @db.Decimal(14, 4)
+  total         Decimal?            @db.Decimal(14, 4)
+  expiredDate   DateTime?           @db.Date
+  status        saleDetails_status? @default(ordered)
+  userCreate    String?             @db.VarChar(36)
+  createdAt     DateTime?           @default(now()) @db.DateTime(0)
+  updatedAt     DateTime?           @default(now()) @db.DateTime(0)
+  deletedAt     DateTime?           @db.DateTime(0)
+  products      products            @relation(fields: [productId], references: [id], onUpdate: Restrict, map: "saleDetailProduct")
+  sales         sales               @relation(fields: [saleId], references: [id], onDelete: Cascade, map: "saleDetailSale")
+  users         users?              @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "saleDetailUser")
+  variants      variants?           @relation(fields: [variantId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "saleDetailVariant")
+
+  @@index([productId], map: "saleDetailProduct")
+  @@index([saleId], map: "saleDetailSale")
+  @@index([userCreate], map: "saleDetailUser")
+  @@index([variantId], map: "saleDetailVariant")
+}
+
+model sales {
+  id                   String        @id @db.VarChar(36)
+  storeId              String?       @db.VarChar(36)
+  memberId             String?       @db.VarChar(36)
+  saleOrderId          String?       @db.VarChar(36)
+  date                 DateTime?     @db.Date
+  invoice              String?       @db.VarChar(100)
+  subTotal             Decimal?      @db.Decimal(14, 4)
+  tax                  Decimal?      @db.Decimal(14, 4)
+  discount             Decimal?      @db.Decimal(14, 4)
+  addtionalCost        Decimal?      @db.Decimal(14, 4)
+  total                Decimal?      @db.Decimal(14, 4)
+  downPayment          Decimal?      @db.Decimal(14, 4)
+  payCash              Decimal?      @db.Decimal(14, 4)
+  payCredit            Decimal?      @db.Decimal(14, 4)
+  payMetodeId          String?       @db.VarChar(36)
+  status               sales_status? @default(ordered)
+  accountCashId        String?       @db.VarChar(36)
+  accountDebitId       String?       @db.VarChar(36)
+  accountCreditId      String?       @db.VarChar(36)
+  accountDownPaymentId String?       @db.VarChar(36)
+  userCreate           String?       @db.VarChar(36)
+  createdAt            DateTime?     @default(now()) @db.DateTime(0)
+  updatedAt            DateTime?     @default(now()) @db.DateTime(0)
+  deletedAt            DateTime?     @db.DateTime(0)
+  saleDetails          saleDetails[]
+  members              members?      @relation(fields: [memberId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "saleMember")
+  stores               stores?       @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "saleStore")
+  users                users?        @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "saleUser")
+
+  @@index([memberId], map: "saleMember")
+  @@index([storeId], map: "saleStore")
+  @@index([userCreate], map: "saleUser")
+}
+
+model stores {
+  id           String         @id @db.VarChar(36)
+  name         String         @db.VarChar(255)
+  userId       String         @db.VarChar(36)
+  address      String?        @db.Text
+  expiredDate  DateTime?      @db.DateTime(0)
+  createdAt    DateTime?      @default(now()) @db.DateTime(0)
+  updatedAt    DateTime?      @default(now()) @db.DateTime(0)
+  deletedAt    DateTime?      @db.DateTime(0)
+  userCreate   String?        @db.VarChar(36)
+  brands       brands[]
+  categories   categories[]
+  memberLevels memberLevels[]
+  members      members[]
+  products     products[]
+  purchases    purchases[]
+  sales        sales[]
+  users        users          @relation(fields: [userId], references: [id], onDelete: Cascade, map: "storeUser")
+  suppliers    suppliers[]
+  units        units[]
+  variants     variants[]
+
+  @@index([userId], map: "storeUser")
+}
+
+model suppliers {
+  id         String      @id @db.VarChar(36)
+  storeId    String?     @db.VarChar(36)
+  name       String      @db.VarChar(150)
+  phone      String?     @db.VarChar(15)
+  address    String?     @db.Text
+  userCreate String?     @db.VarChar(36)
+  createdAt  DateTime?   @default(now()) @db.DateTime(0)
+  updatedAt  DateTime?   @default(now()) @db.DateTime(0)
+  deletedAt  DateTime?   @db.DateTime(0)
+  purchases  purchases[]
+  stores     stores?     @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "supplierStore")
+  users      users?      @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "supplierUser")
+
+  @@index([storeId], map: "supplierStore")
+  @@index([userCreate], map: "supplierUser")
+}
+
+model units {
+  id                 String               @id @db.VarChar(36)
+  storeId            String?              @db.VarChar(36)
+  name               String               @db.VarChar(50)
+  description        String?              @db.VarChar(255)
+  userCreate         String?              @db.VarChar(36)
+  createdAt          DateTime?            @default(now()) @db.DateTime(0)
+  updatedAt          DateTime?            @default(now()) @db.DateTime(0)
+  deletedAt          DateTime?            @db.DateTime(0)
+  productConversions productConversions[]
+  stores             stores?              @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "unitStore")
+  users              users?               @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "unitUser")
+
+  @@index([storeId], map: "unitStore")
+  @@index([userCreate], map: "unitUser")
+}
+
+model users {
+  id                 String               @id @default(uuid()) @db.VarChar(36)
+  name               String               @db.VarChar(255)
+  username           String               @unique(map: "username") @db.VarChar(100)
+  password           String               @db.VarChar(255)
+  email              String?              @unique(map: "email") @db.VarChar(255)
+  phone              String?              @db.VarChar(15)
+  createdAt          DateTime?            @default(now()) @db.DateTime(0)
+  updatedAt          DateTime?            @default(now()) @db.DateTime(0)
+  deletedAt          DateTime?            @db.DateTime(0)
+  userCreate         String?              @db.VarChar(36)
+  brands             brands[]
+  categories         categories[]
+  memberLevels       memberLevels?
+  members            members[]
+  productConversions productConversions[]
+  productVariants    productVariants[]
+  products           products[]
+  purchaseDetails    purchaseDetails[]
+  purchases          purchases[]
+  saleDetails        saleDetails[]
+  sales              sales[]
+  stores             stores[]
+  suppliers          suppliers[]
+  units              units[]
+  variants           variants[]
+}
+
+model variants {
+  id              String            @id @db.VarChar(36)
+  storeId         String?           @db.VarChar(36)
+  name            String            @db.VarChar(50)
+  description     String?           @db.VarChar(255)
+  userCreate      String?           @db.VarChar(36)
+  createdAt       DateTime?         @default(now()) @db.DateTime(0)
+  updatedAt       DateTime?         @default(now()) @db.DateTime(0)
+  deletedAt       DateTime?         @db.DateTime(0)
+  productVariants productVariants[]
+  purchaseDetails purchaseDetails[]
+  saleDetails     saleDetails[]
+  stores          stores?           @relation(fields: [storeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "variantStore")
+  users           users?            @relation(fields: [userCreate], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "variantUser")
+
+  @@index([storeId], map: "variantStore")
+  @@index([userCreate], map: "variantUser")
+}
+
+enum products_status {
+  active
+  non_active @map("non-active")
+}
+
+enum saleDetails_status {
+  ordered
+  cooking
+  cancle
+  served
+  finish
+}
+
+enum products_type {
+  item
+  material
+  formula
+  package
+  service
+  cost
+}
+
+enum products_consignmentType {
+  in
+  out
+}
+
+enum sales_status {
+  ordered
+  finish
+}
