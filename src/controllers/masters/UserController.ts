@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { UserQueryInterface } from "#root/interfaces/UserInterface";
 import Model from "#root/services/PrismaService";
 import { Request, Response } from "express";

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Model from "#services/PrismaService";
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken';
 import { LoginInterface } from "#root/interfaces/AuthInterface";
 

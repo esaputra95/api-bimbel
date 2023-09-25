@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.3.1",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -24,7 +24,7 @@
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
+    "@types/bcryptjs": "^2.4.4",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.3",
     "link-module-alias": "^1.2.0",
