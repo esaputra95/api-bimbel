@@ -1,6 +1,5 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import 'module-alias/register';
-import path from 'path';
 import 'dotenv/config'
 import bodyParser from 'body-parser';
 

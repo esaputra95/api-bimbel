@@ -2,12 +2,14 @@
   "name": "api-binary",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/index.ts",
     "postinstall": "link-module-alias",
-    "preinstall": "command -v link-module-alias && link-module-alias clean || true"
+    "preinstall": "command -v link-module-alias && link-module-alias clean || true",
+    "build": "tsc && tsc-alias",
+    "start": "tsc && tsc-alias && nodemon dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -27,9 +29,11 @@
     "@types/bcryptjs": "^2.4.4",
     "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.3",
+    "@types/module-alias": "^2.0.2",
     "link-module-alias": "^1.2.0",
     "nodemon": "^3.0.1",
     "prisma": "^5.3.1",
+    "tsc-alias": "^1.8.8",
     "typescript": "^5.2.2"
   },
   "_moduleAliases": {
