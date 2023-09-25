@@ -14,4 +14,4 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/auth', login)
 app.use('/users', user)
 
-app.listen(1234, ()=> console.log('server run ip 1234ß'))
+app.listen(1234, ()=> console.log('server run ip 127.0.0.1:1234'))
