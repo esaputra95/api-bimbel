@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationChain, validationResult } from "express-validator";
 
-const ValidatationMessage = (validations: ValidationChain[]) => {
+const validationMessage = (validations: ValidationChain[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
       for (let validation of validations) {
         const result = await validation.run(req);
@@ -16,4 +16,4 @@ const ValidatationMessage = (validations: ValidationChain[]) => {
     };
 };
 
-export default ValidatationMessage
+export default validationMessage
