@@ -1,5 +1,4 @@
-import { Prisma } from "@prisma/client";
-import { Response } from "express";
+import { Prisma } from '@prisma/client';
 
 export const handleValidationError = async (error: Prisma.PrismaClientKnownRequestError) => {
     let status=500;
