@@ -51,11 +51,13 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
             }
         })
     } catch (error) {
-        console.log({error});
-        
-        res.send({
-            status: false,
-            message: error
+        let message = errorType
+        message.message.msg = `${error}`
+        res.status(500).json({
+            status: message.status,
+            errors: [
+                message.message
+            ]
         })
     }
 }
@@ -72,6 +74,7 @@ const postData = async (req:Request, res:Response) => {
         })
     } catch (error) {
         let message = errorType
+        message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             message =  await handleValidationError(error)
         }
@@ -105,6 +108,7 @@ const updateData = async (req:Request, res:Response) => {
         })
     } catch (error) {
         let message = errorType
+        message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
             message =  await handleValidationError(error)
         }
