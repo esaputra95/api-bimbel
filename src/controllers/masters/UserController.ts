@@ -1,9 +1,9 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { UserQueryInterface } from "#root/interfaces/UserInterface";
 import Model from "#root/services/PrismaService";
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
-import { handleValidationError } from "#root/helpers/handleValidationErrort";
+import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 
 const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response) => {
@@ -126,7 +126,7 @@ const deleteData = async (req:Request, res:Response)=> {
         })
         res.status(200).json({
             status: false,
-            message: 'successfull in deleted user data'
+            message: 'successfully in deleted user data'
         })
     } catch (error) {
         let message = {
@@ -155,7 +155,7 @@ const getDataById = async (req:Request, res:Response) => {
         if(!model) throw new Error('data not found')
         res.status(200).json({
             status: true,
-            message: 'successfull in get user data',
+            message: 'successfully in get user data',
             data: {
                 users: model
             }

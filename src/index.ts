@@ -1,6 +1,5 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import 'module-alias/register';
-import path from 'path';
 import 'dotenv/config'
 import bodyParser from 'body-parser';
 
@@ -14,4 +13,4 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/auth', login)
 app.use('/users', user)
 
-app.listen(1234, ()=> console.log('server run ip 1234ß'))
+app.listen(3000, ()=> console.log('server run ip 127.0.0.1:3000'))
