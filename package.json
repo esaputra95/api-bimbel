@@ -8,14 +8,9 @@
     "dev": "nodemon src/index.ts",
     "postinstall": "link-module-alias",
     "preinstall": "command -v link-module-alias && link-module-alias clean || true",
-    "build": "rimraf dist && tsc && tsc && tsc-alias",
-    "start": "rimraf dist && tsc && tsc && tsc-alias && nodemon dist/index.js",
-    "add-build": "git add dist -f"
+    "build": "tsc && tsc && tsc-alias",
+    "start": "tsc && tsc && tsc-alias && nodemon dist/index.js"
   },
-  "pre-commit": [
-    "build",
-    "add-build"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -37,9 +32,7 @@
     "@types/module-alias": "^2.0.2",
     "link-module-alias": "^1.2.0",
     "nodemon": "^3.0.1",
-    "pre-commit": "^1.2.2",
     "prisma": "^5.3.1",
-    "rimraf": "^5.0.4",
     "tsc-alias": "^1.8.8",
     "typescript": "^5.2.2"
   },
