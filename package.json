@@ -8,8 +8,9 @@
     "dev": "nodemon src/index.ts",
     "postinstall": "link-module-alias",
     "preinstall": "command -v link-module-alias && link-module-alias clean || true",
-    "build": "tsc && tsc && tsc-alias",
-    "start": "tsc && tsc && tsc-alias && nodemon dist/index.js"
+    "build": "tsc && tsc-alias",
+    "start": "tsc && tsc-alias && nodemon dist/index.js",
+    "prod": "yarn install && tsc && tsc-alias && nodemon dist/index.js"
   },
   "keywords": [],
   "author": "",
