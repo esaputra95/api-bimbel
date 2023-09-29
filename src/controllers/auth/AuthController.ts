@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Model from "#services/PrismaService";
-import { compare } from 'bcryptjs'
+import bcrypt from 'bcrypt'
 import { sign } from 'jsonwebtoken';
 import { LoginInterface } from "#root/interfaces/AuthInterface";
 
@@ -13,19 +13,28 @@ export const Login = async (req:Request, res:Response) => {
             }
         });
         if(!user) throw new Error('Username or password incorrect')
-        const match = await compare(data.password, user.password);
-        if(!match) res.status(401).json({message: "Wrong username or password"});
+        const match = bcrypt.compare('123456789', user.password ?? '')
+        if(!match) throw new Error('Username or password incorrect')
         const accessToken = sign({
             id: user.id,
             username: user.username,
             name: user.name
         }, '1234567890');
         res.json({
-            token: accessToken
+            success: true,
+            message: "OK",
+            data: {
+                token: accessToken,
+                refreshToken: "refreshToken"
+                }
         })
     } catch (error) {
         res.status(404).json({
-            message: `${error}`
+            success: false,
+            message: "Unauthorized",
+            error: {
+                displayMessage: "Your username or password is incorect"
+            }
         })
     }
 }

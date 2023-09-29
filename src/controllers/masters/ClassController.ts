@@ -1,12 +1,11 @@
-import bcrypt from "bcrypt";
-import { UserQueryInterface } from "#root/interfaces/UserInterface";
 import Model from "#root/services/PrismaService";
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
+import { ClassMasterQueryInterface } from "#root/interfaces/ClassMasterInterface";
 
-const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response) => {
+const getData = async (req:Request<{}, {}, {}, ClassMasterQueryInterface>, res:Response) => {
     try {
         const query = req.query;
         // PAGING
@@ -16,9 +15,6 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         // FILTER
         let filter:any= []
         query.name ? filter = [...filter, {name: { contains: query.name }}] : null
-        query.username ? filter = [...filter, {username: { contains: query.username }}] : null
-        query.email ? filter = [...filter, {email: { contains: query.email }}] : null
-        query.phone ? filter = [...filter, {phone: { contains: query.phone }}] : null
         if(filter.length > 0){
             filter = {
                 OR: [
@@ -26,21 +22,21 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
                 ]
             }
         }
-        const data = await Model.users.findMany({
+        const data = await Model.classMaster.findMany({
             where: {
                 ...filter
             },
             skip: skip,
             take: take
         });
-        const total = await Model.users.count({
+        const total = await Model.classMaster.count({
             where: {
                 ...filter
             }
         })
         res.status(200).json({
             status: true,
-            message: "successful in getting user data",
+            message: "successfully in getting class data",
             data: {
                 users: data,
                 info:{
@@ -65,12 +61,10 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
-        const salt = await bcrypt.genSalt()
-        data.password = await bcrypt.hash(data.password, salt)
-        await Model.users.create({data: data});
+        await Model.classMaster.create({data: data});
         res.status(200).json({
             status: true,
-            message: 'successful in created user data'
+            message: 'successfully in created class data'
         })
     } catch (error) {
         let message = errorType
@@ -89,14 +83,8 @@ const postData = async (req:Request, res:Response) => {
 
 const updateData = async (req:Request, res:Response) => {
     try {
-        const salt = await bcrypt.genSalt();
         const data = { ...req.body};
-        if(!req.body.password){
-            delete data.password
-        }else{
-            data.password = await bcrypt.hash(req.body.password, salt);
-        }
-        await Model.users.update({
+        await Model.classMaster.update({
             where: {
                 id: req.params.id
             },
@@ -104,7 +92,7 @@ const updateData = async (req:Request, res:Response) => {
         });
         res.status(200).json({
             status: true,
-            message: 'successful in updated user data'
+            message: 'successful in updated class data'
         })
     } catch (error) {
         let message = errorType
@@ -123,14 +111,14 @@ const updateData = async (req:Request, res:Response) => {
 
 const deleteData = async (req:Request, res:Response)=> {
     try {
-        await Model.users.delete({
+        await Model.classMaster.delete({
             where: {
                 id: req.params.id
             }
         })
         res.status(200).json({
             status: false,
-            message: 'successfully in deleted user data'
+            message: 'successfully in deleted class data'
         })
     } catch (error) {
         let message = {
@@ -151,7 +139,7 @@ const deleteData = async (req:Request, res:Response)=> {
 
 const getDataById = async (req:Request, res:Response) => {
     try {
-        const model = await Model.users.findUnique({
+        const model = await Model.classMaster.findUnique({
             where: {
                 id: req.params.id
             }
@@ -159,7 +147,7 @@ const getDataById = async (req:Request, res:Response) => {
         if(!model) throw new Error('data not found')
         res.status(200).json({
             status: true,
-            message: 'successfully in get user data',
+            message: 'successfully in get class data',
             data: {
                 users: model
             }

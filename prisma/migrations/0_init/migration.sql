@@ -1,446 +1,656 @@
 -- CreateTable
-CREATE TABLE `brands` (
+CREATE TABLE `class` (
     `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `name` VARCHAR(50) NOT NULL,
+    `code` VARCHAR(15) NULL,
+    `name` VARCHAR(25) NOT NULL,
+    `classTypeId` VARCHAR(36) NULL,
+    `method` ENUM('online', 'offline') NULL DEFAULT 'online',
+    `description` VARCHAR(50) NULL,
+    `useraCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `classTypeId`(`classTypeId`),
+    INDEX `useraCreate`(`useraCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `classTypes` (
+    `id` VARCHAR(36) NOT NULL,
+    `code` VARCHAR(15) NULL,
+    `name` VARCHAR(25) NULL,
+    `price` DECIMAL(14, 3) NULL,
+    `description` VARCHAR(50) NULL,
+    `useraCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `useraCreate`(`useraCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `courses` (
+    `id` VARCHAR(36) NOT NULL,
+    `majorId` VARCHAR(36) NULL,
+    `code` VARCHAR(50) NULL,
+    `name` VARCHAR(150) NULL,
     `description` VARCHAR(255) NULL,
     `userCreate` VARCHAR(36) NULL,
     `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `deletedAt` DATETIME(0) NULL,
 
-    INDEX `brandStore`(`storeId`),
-    INDEX `brandUser`(`userCreate`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `categories` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `name` VARCHAR(50) NOT NULL,
-    `description` VARCHAR(255) NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `categoriStore`(`storeId`),
-    INDEX `categoriUser`(`userCreate`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `memberLevels` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `name` VARCHAR(100) NOT NULL,
-    `level` SMALLINT NOT NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `memberLevelStore`(`storeId`),
+    INDEX `majorId`(`majorId`),
     INDEX `userCreate`(`userCreate`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `members` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `memberLevelId` VARCHAR(36) NOT NULL,
-    `name` VARCHAR(150) NOT NULL,
-    `phone` VARCHAR(16) NULL,
-    `address` TEXT NULL,
+CREATE TABLE `guidanceTypes` (
+    `id` VARCHAR(50) NOT NULL,
+    `name` VARCHAR(150) NULL,
+    `total` INTEGER NULL,
+    `type` ENUM('private', 'reguler') NULL,
     `userCreate` VARCHAR(36) NULL,
     `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `deletedAt` DATETIME(0) NULL,
 
-    INDEX `memberLevel`(`memberLevelId`),
-    INDEX `memberStore`(`storeId`),
-    INDEX `memberUser`(`userCreate`),
+    INDEX `userCreate`(`userCreate`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `productConversions` (
+CREATE TABLE `locations` (
     `id` VARCHAR(36) NOT NULL,
-    `productId` VARCHAR(36) NOT NULL,
-    `unitId` VARCHAR(36) NOT NULL,
-    `quantity` INTEGER NOT NULL DEFAULT 1,
-    `status` SMALLINT NULL DEFAULT 1,
+    `name` VARCHAR(150) NULL,
+    `description` VARCHAR(150) NULL,
     `userCreate` VARCHAR(36) NULL,
     `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `deletedAt` DATETIME(0) NULL,
 
-    INDEX `productConversionProduct`(`productId`),
-    INDEX `productConversionUnit`(`unitId`),
-    INDEX `productConversionUser`(`userCreate`),
+    INDEX `userCreate`(`userCreate`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `productVariants` (
+CREATE TABLE `majors` (
     `id` VARCHAR(36) NOT NULL,
-    `variantId` VARCHAR(36) NOT NULL,
-    `conversionId` VARCHAR(36) NOT NULL,
-    `price` DECIMAL(14, 4) NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `productVariantConversion`(`conversionId`),
-    INDEX `productVariantUser`(`userCreate`),
-    INDEX `productVariantVariant`(`variantId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `products` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `categoriId` VARCHAR(36) NOT NULL,
-    `brandId` VARCHAR(36) NOT NULL,
+    `universityId` VARCHAR(36) NULL,
     `code` VARCHAR(50) NULL,
-    `name` VARCHAR(255) NOT NULL,
-    `hppType` VARCHAR(15) NULL,
-    `taxInclude` SMALLINT NULL,
-    `stockMinimum` INTEGER NULL,
-    `description` TEXT NULL,
-    `status` ENUM('active', 'non-active') NULL DEFAULT 'active',
-    `image` TEXT NULL,
-    `type` ENUM('item', 'material', 'formula', 'package', 'service', 'cost') NULL,
-    `consignment` INTEGER NULL,
-    `consignmentType` ENUM('in', 'out') NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `productBrand`(`brandId`),
-    INDEX `productCategori`(`categoriId`),
-    INDEX `productStore`(`storeId`),
-    INDEX `productUser`(`userCreate`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `purchaseDetails` (
-    `id` VARCHAR(36) NOT NULL,
-    `purchaseId` VARCHAR(36) NOT NULL,
-    `productId` VARCHAR(36) NOT NULL,
-    `variantId` VARCHAR(36) NULL,
-    `quantityOrder` DECIMAL(14, 4) NULL,
-    `quantity` DECIMAL(14, 4) NULL,
-    `price` DECIMAL(14, 4) NULL,
-    `discount` DECIMAL(14, 4) NULL,
-    `total` DECIMAL(14, 4) NULL,
-    `expiredDate` DATE NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `purchaseDetailProduct`(`productId`),
-    INDEX `purchaseDetailPurchase`(`purchaseId`),
-    INDEX `purchaseDetailUser`(`userCreate`),
-    INDEX `purchaseDetailVariant`(`variantId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `purchases` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `supplierId` VARCHAR(36) NOT NULL,
-    `purchaseOrderId` VARCHAR(36) NULL,
-    `date` DATE NOT NULL,
-    `invoice` VARCHAR(100) NOT NULL,
-    `subTotal` DECIMAL(14, 4) NULL,
-    `tax` DECIMAL(14, 4) NULL,
-    `discount` DECIMAL(14, 4) NULL,
-    `addtionalCost` DECIMAL(14, 4) NULL,
-    `total` DECIMAL(14, 4) NULL,
-    `downPayment` DECIMAL(14, 4) NULL,
-    `payCash` DECIMAL(14, 4) NULL,
-    `payCredit` DECIMAL(14, 4) NULL,
-    `payMetodeId` VARCHAR(36) NULL,
-    `accountCashId` VARCHAR(36) NULL,
-    `accountDebitId` VARCHAR(36) NULL,
-    `accountCreditId` VARCHAR(36) NULL,
-    `accountDownPaymentId` VARCHAR(36) NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `purchaseStore`(`storeId`),
-    INDEX `purchaseSupplier`(`supplierId`),
-    INDEX `purchaseUser`(`userCreate`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `saleDetails` (
-    `id` VARCHAR(36) NOT NULL,
-    `saleId` VARCHAR(36) NOT NULL,
-    `productId` VARCHAR(36) NOT NULL,
-    `variantId` VARCHAR(36) NULL,
-    `quantityOrder` DECIMAL(14, 4) NULL,
-    `quantity` DECIMAL(14, 4) NULL,
-    `price` DECIMAL(14, 4) NULL,
-    `discount` DECIMAL(14, 4) NULL,
-    `total` DECIMAL(14, 4) NULL,
-    `expiredDate` DATE NULL,
-    `status` ENUM('ordered', 'cooking', 'cancle', 'served', 'finish') NULL DEFAULT 'ordered',
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `saleDetailProduct`(`productId`),
-    INDEX `saleDetailSale`(`saleId`),
-    INDEX `saleDetailUser`(`userCreate`),
-    INDEX `saleDetailVariant`(`variantId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `sales` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `memberId` VARCHAR(36) NULL,
-    `saleOrderId` VARCHAR(36) NULL,
-    `date` DATE NULL,
-    `invoice` VARCHAR(100) NULL,
-    `subTotal` DECIMAL(14, 4) NULL,
-    `tax` DECIMAL(14, 4) NULL,
-    `discount` DECIMAL(14, 4) NULL,
-    `addtionalCost` DECIMAL(14, 4) NULL,
-    `total` DECIMAL(14, 4) NULL,
-    `downPayment` DECIMAL(14, 4) NULL,
-    `payCash` DECIMAL(14, 4) NULL,
-    `payCredit` DECIMAL(14, 4) NULL,
-    `payMetodeId` VARCHAR(36) NULL,
-    `status` ENUM('ordered', 'finish') NULL DEFAULT 'ordered',
-    `accountCashId` VARCHAR(36) NULL,
-    `accountDebitId` VARCHAR(36) NULL,
-    `accountCreditId` VARCHAR(36) NULL,
-    `accountDownPaymentId` VARCHAR(36) NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `saleMember`(`memberId`),
-    INDEX `saleStore`(`storeId`),
-    INDEX `saleUser`(`userCreate`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `stores` (
-    `id` VARCHAR(36) NOT NULL,
-    `name` VARCHAR(255) NOT NULL,
-    `userId` VARCHAR(36) NOT NULL,
-    `address` TEXT NULL,
-    `expiredDate` DATETIME(0) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-    `userCreate` VARCHAR(36) NULL,
-
-    INDEX `storeUser`(`userId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `suppliers` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `name` VARCHAR(150) NOT NULL,
-    `phone` VARCHAR(15) NULL,
-    `address` TEXT NULL,
-    `userCreate` VARCHAR(36) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-
-    INDEX `supplierStore`(`storeId`),
-    INDEX `supplierUser`(`userCreate`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `units` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `name` VARCHAR(50) NOT NULL,
+    `name` VARCHAR(150) NULL,
     `description` VARCHAR(255) NULL,
     `userCreate` VARCHAR(36) NULL,
     `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `deletedAt` DATETIME(0) NULL,
 
-    INDEX `unitStore`(`storeId`),
-    INDEX `unitUser`(`userCreate`),
+    INDEX `universityId`(`universityId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `materials` (
+    `id` VARCHAR(36) NOT NULL,
+    `courseId` VARCHAR(36) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `name` VARCHAR(100) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `courseId`(`courseId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `packages` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(150) NULL,
+    `description` VARCHAR(150) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `payrollDetails` (
+    `id` VARCHAR(36) NOT NULL,
+    `payrollId` VARCHAR(36) NULL,
+    `scheduleId` VARCHAR(36) NULL,
+    `price` DECIMAL(14, 4) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `payrollId`(`payrollId`),
+    INDEX `scheduleId`(`scheduleId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `payrolls` (
+    `id` VARCHAR(36) NOT NULL,
+    `userId` VARCHAR(36) NULL,
+    `basicSalary` DECIMAL(14, 4) NULL,
+    `sessionSalary` DECIMAL(14, 4) NULL,
+    `total` DECIMAL(14, 4) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    INDEX `userId`(`userId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `permissionNames` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(150) NULL,
+    `group` VARCHAR(100) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `permissions` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(100) NULL,
+    `action` VARCHAR(150) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `recordMateri` (
+    `id` VARCHAR(36) NOT NULL,
+    `date` DATETIME(0) NULL,
+    `studentId` VARCHAR(36) NULL,
+    `materiId` VARCHAR(36) NULL,
+    `description` TEXT NULL,
+    `advice` TEXT NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `materiId`(`materiId`),
+    INDEX `studentId`(`studentId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `registers` (
+    `id` VARCHAR(36) NOT NULL,
+    `studentId` VARCHAR(36) NULL,
+    `classId` VARCHAR(36) NULL,
+    `university` VARCHAR(36) NULL,
+    `amount` INTEGER NULL,
+    `sessionId` VARCHAR(36) NULL,
+    `packageId` VARCHAR(36) NULL,
+    `guidanceTypeId` VARCHAR(36) NULL,
+    `locationId` VARCHAR(36) NULL,
+    `schoolYearId` VARCHAR(36) NULL,
+    `status` ENUM('student', 'alumni') NULL DEFAULT 'student',
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+    `invoiceStatus` ENUM('pending', 'generated') NULL DEFAULT 'pending',
+
+    INDEX `classId`(`classId`),
+    INDEX `guidanceTypeId`(`guidanceTypeId`),
+    INDEX `locationId`(`locationId`),
+    INDEX `packageId`(`packageId`),
+    INDEX `schoolYearId`(`schoolYearId`),
+    INDEX `sessionId`(`sessionId`),
+    INDEX `studentId`(`studentId`),
+    INDEX `university`(`university`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `roleHasPermissions` (
+    `id` VARCHAR(36) NOT NULL,
+    `roleId` VARCHAR(36) NULL,
+    `permissionId` VARCHAR(36) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `permissionId`(`permissionId`),
+    INDEX `roleId`(`roleId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `roles` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(100) NULL,
+    `description` VARCHAR(255) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `rooms` (
+    `id` VARCHAR(36) NOT NULL,
+    `code` VARCHAR(15) NULL,
+    `name` VARCHAR(25) NULL,
+    `description` VARCHAR(50) NULL,
+    `useraCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `useraCreate`(`useraCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `schedules` (
+    `id` VARCHAR(36) NOT NULL,
+    `studyGroupId` VARCHAR(36) NOT NULL,
+    `date` DATETIME(0) NOT NULL,
+    `tentorId` VARCHAR(36) NOT NULL,
+    `roomId` VARCHAR(36) NULL,
+    `type` ENUM('study', 'try-out') NULL DEFAULT 'study',
+    `materiId` VARCHAR(36) NULL,
+    `method` ENUM('online', 'offline') NULL DEFAULT 'online',
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `roomId`(`roomId`),
+    INDEX `studyGroupId`(`studyGroupId`),
+    INDEX `tentorId`(`tentorId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `schoolYears` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(20) NULL,
+    `description` VARCHAR(100) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `sessions` (
+    `id` VARCHAR(36) NOT NULL,
+    `code` VARCHAR(50) NULL,
+    `name` VARCHAR(50) NULL,
+    `quantity` INTEGER NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `students` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(100) NULL,
+    `studyProgram` VARCHAR(100) NULL,
+    `phone` VARCHAR(15) NULL,
+    `school` VARCHAR(100) NULL,
+    `placeBird` VARCHAR(100) NULL,
+    `dateBirth` DATE NULL,
+    `address` TEXT NULL,
+    `gender` ENUM('laki-laki', 'perempuan') NULL,
+    `classGrade` VARCHAR(50) NULL,
+    `university` VARCHAR(100) NULL,
+    `statusStudy` ENUM('study', 'alumni') NULL,
+    `parentName` VARCHAR(100) NULL,
+    `parentPhone` VARCHAR(15) NULL,
+    `image` TEXT NULL,
+    `agreement` SMALLINT NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `studyGroupDetails` (
+    `id` VARCHAR(36) NOT NULL,
+    `studyGroupId` VARCHAR(36) NULL,
+    `studentId` VARCHAR(36) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `studentId`(`studentId`),
+    INDEX `studyGroupId`(`studyGroupId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `studyGroups` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(255) NULL,
+    `classId` VARCHAR(36) NULL,
+    `guidanceTypeId` VARCHAR(36) NULL,
+    `total` SMALLINT NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `classId`(`classId`),
+    INDEX `guidanceTypeId`(`guidanceTypeId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `tentorNotAvailable` (
+    `id` VARCHAR(36) NOT NULL,
+    `tentorId` VARCHAR(36) NULL,
+    `startDate` DATETIME(0) NULL,
+    `untilDate` DATETIME(0) NULL,
+    `description` VARCHAR(255) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    INDEX `tentorId`(`tentorId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `tentorSkills` (
+    `id` VARCHAR(36) NOT NULL,
+    `tentorId` VARCHAR(36) NULL,
+    `courseId` VARCHAR(36) NULL,
+    `description` VARCHAR(255) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `tentorId`(`tentorId`),
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `universities` (
+    `id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(255) NULL,
+    `code` VARCHAR(50) NULL,
+    `description` VARCHAR(255) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `userCreate`(`userCreate`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `userHasRoles` (
+    `id` VARCHAR(36) NOT NULL,
+    `roleId` VARCHAR(36) NULL,
+    `userId` VARCHAR(36) NULL,
+    `userCreate` VARCHAR(36) NULL,
+    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `deletedAt` DATETIME(0) NULL,
+
+    INDEX `roleId`(`roleId`),
+    INDEX `userCreate`(`userCreate`),
+    INDEX `userId`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `users` (
     `id` VARCHAR(36) NOT NULL,
-    `name` VARCHAR(255) NOT NULL,
-    `username` VARCHAR(100) NOT NULL,
-    `password` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(150) NULL,
     `email` VARCHAR(255) NULL,
+    `username` VARCHAR(255) NULL,
+    `password` VARCHAR(255) NULL,
+    `token` TEXT NULL,
+    `refreshToken` TEXT NULL,
+    `roleId` VARCHAR(36) NULL,
+    `userType` ENUM('admin', 'tentor') NULL,
+    `nickname` VARCHAR(100) NULL,
+    `address` TEXT NULL,
     `phone` VARCHAR(15) NULL,
-    `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `deletedAt` DATETIME(0) NULL,
-    `userCreate` VARCHAR(36) NULL,
-
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `variants` (
-    `id` VARCHAR(36) NOT NULL,
-    `storeId` VARCHAR(36) NULL,
-    `name` VARCHAR(50) NOT NULL,
-    `description` VARCHAR(255) NULL,
     `userCreate` VARCHAR(36) NULL,
     `createdAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updatedAt` DATETIME(0) NULL DEFAULT CURRENT_TIMESTAMP(0),
     `deletedAt` DATETIME(0) NULL,
 
-    INDEX `variantStore`(`storeId`),
-    INDEX `variantUser`(`userCreate`),
+    INDEX `roleId`(`roleId`),
+    INDEX `userCreate`(`userCreate`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `brands` ADD CONSTRAINT `brandStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `class` ADD CONSTRAINT `class_ibfk_2` FOREIGN KEY (`classTypeId`) REFERENCES `classTypes`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `brands` ADD CONSTRAINT `brandUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `class` ADD CONSTRAINT `class_ibfk_3` FOREIGN KEY (`useraCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `categories` ADD CONSTRAINT `categoriStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `classTypes` ADD CONSTRAINT `classtypes_ibfk_1` FOREIGN KEY (`useraCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `categories` ADD CONSTRAINT `categoriUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `courses` ADD CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`majorId`) REFERENCES `majors`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `memberLevels` ADD CONSTRAINT `memberLevelStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `courses` ADD CONSTRAINT `courses_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `memberLevels` ADD CONSTRAINT `memberLevelUser` FOREIGN KEY (`id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `guidanceTypes` ADD CONSTRAINT `guidancetypes_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `members` ADD CONSTRAINT `memberLevel` FOREIGN KEY (`memberLevelId`) REFERENCES `memberLevels`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `locations` ADD CONSTRAINT `locations_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `members` ADD CONSTRAINT `memberStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `majors` ADD CONSTRAINT `majors_ibfk_1` FOREIGN KEY (`universityId`) REFERENCES `universities`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `members` ADD CONSTRAINT `memberUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `majors` ADD CONSTRAINT `majors_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `productConversions` ADD CONSTRAINT `productConversionProduct` FOREIGN KEY (`productId`) REFERENCES `products`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `materials` ADD CONSTRAINT `materials_ibfk_1` FOREIGN KEY (`courseId`) REFERENCES `courses`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `productConversions` ADD CONSTRAINT `productConversionUnit` FOREIGN KEY (`unitId`) REFERENCES `units`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `materials` ADD CONSTRAINT `materials_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `productConversions` ADD CONSTRAINT `productConversionUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `packages` ADD CONSTRAINT `packages_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `productVariants` ADD CONSTRAINT `productVariantConversion` FOREIGN KEY (`conversionId`) REFERENCES `productConversions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `payrollDetails` ADD CONSTRAINT `payrolldetails_ibfk_1` FOREIGN KEY (`payrollId`) REFERENCES `payrolls`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `productVariants` ADD CONSTRAINT `productVariantUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `payrollDetails` ADD CONSTRAINT `payrolldetails_ibfk_2` FOREIGN KEY (`scheduleId`) REFERENCES `schedules`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `productVariants` ADD CONSTRAINT `productVariantVariant` FOREIGN KEY (`variantId`) REFERENCES `variants`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `payrollDetails` ADD CONSTRAINT `payrolldetails_ibfk_3` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `productBrand` FOREIGN KEY (`brandId`) REFERENCES `brands`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `payrolls` ADD CONSTRAINT `payrolls_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `productCategori` FOREIGN KEY (`categoriId`) REFERENCES `categories`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `payrolls` ADD CONSTRAINT `payrolls_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `productStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `permissionNames` ADD CONSTRAINT `permissionnames_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `productUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `recordMateri` ADD CONSTRAINT `recordmateri_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `students`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `purchaseDetails` ADD CONSTRAINT `purchaseDetailProduct` FOREIGN KEY (`productId`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `recordMateri` ADD CONSTRAINT `recordmateri_ibfk_2` FOREIGN KEY (`materiId`) REFERENCES `materials`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `purchaseDetails` ADD CONSTRAINT `purchaseDetailPurchase` FOREIGN KEY (`purchaseId`) REFERENCES `purchases`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `recordMateri` ADD CONSTRAINT `recordmateri_ibfk_3` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `purchaseDetails` ADD CONSTRAINT `purchaseDetailUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_1` FOREIGN KEY (`studentId`) REFERENCES `students`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `purchaseDetails` ADD CONSTRAINT `purchaseDetailVariant` FOREIGN KEY (`variantId`) REFERENCES `variants`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_2` FOREIGN KEY (`classId`) REFERENCES `class`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `purchases` ADD CONSTRAINT `purchaseStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_3` FOREIGN KEY (`university`) REFERENCES `universities`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `purchases` ADD CONSTRAINT `purchaseSupplier` FOREIGN KEY (`supplierId`) REFERENCES `suppliers`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_4` FOREIGN KEY (`sessionId`) REFERENCES `sessions`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `purchases` ADD CONSTRAINT `purchaseUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_5` FOREIGN KEY (`packageId`) REFERENCES `packages`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `saleDetails` ADD CONSTRAINT `saleDetailProduct` FOREIGN KEY (`productId`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_6` FOREIGN KEY (`guidanceTypeId`) REFERENCES `guidanceTypes`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `saleDetails` ADD CONSTRAINT `saleDetailSale` FOREIGN KEY (`saleId`) REFERENCES `sales`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_7` FOREIGN KEY (`locationId`) REFERENCES `locations`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `saleDetails` ADD CONSTRAINT `saleDetailUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_8` FOREIGN KEY (`schoolYearId`) REFERENCES `schoolYears`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `saleDetails` ADD CONSTRAINT `saleDetailVariant` FOREIGN KEY (`variantId`) REFERENCES `variants`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `registers` ADD CONSTRAINT `registers_ibfk_9` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `sales` ADD CONSTRAINT `saleMember` FOREIGN KEY (`memberId`) REFERENCES `members`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `roleHasPermissions` ADD CONSTRAINT `rolehaspermissions_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `sales` ADD CONSTRAINT `saleStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `roleHasPermissions` ADD CONSTRAINT `rolehaspermissions_ibfk_2` FOREIGN KEY (`roleId`) REFERENCES `roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `sales` ADD CONSTRAINT `saleUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `roleHasPermissions` ADD CONSTRAINT `rolehaspermissions_ibfk_3` FOREIGN KEY (`permissionId`) REFERENCES `permissions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `stores` ADD CONSTRAINT `storeUser` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `roles` ADD CONSTRAINT `roles_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `suppliers` ADD CONSTRAINT `supplierStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `rooms` ADD CONSTRAINT `rooms_ibfk_1` FOREIGN KEY (`useraCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `suppliers` ADD CONSTRAINT `supplierUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `schedules` ADD CONSTRAINT `schedules_ibfk_1` FOREIGN KEY (`studyGroupId`) REFERENCES `studyGroups`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `units` ADD CONSTRAINT `unitStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `schedules` ADD CONSTRAINT `schedules_ibfk_2` FOREIGN KEY (`tentorId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `units` ADD CONSTRAINT `unitUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `schedules` ADD CONSTRAINT `schedules_ibfk_4` FOREIGN KEY (`roomId`) REFERENCES `rooms`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- AddForeignKey
-ALTER TABLE `variants` ADD CONSTRAINT `variantStore` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `schedules` ADD CONSTRAINT `schedules_ibfk_5` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 
 -- AddForeignKey
-ALTER TABLE `variants` ADD CONSTRAINT `variantUser` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `schoolYears` ADD CONSTRAINT `schoolyears_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `sessions` ADD CONSTRAINT `sessions_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `students` ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `studyGroupDetails` ADD CONSTRAINT `studygroupdetails_ibfk_1` FOREIGN KEY (`studyGroupId`) REFERENCES `studyGroups`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `studyGroupDetails` ADD CONSTRAINT `studygroupdetails_ibfk_2` FOREIGN KEY (`studentId`) REFERENCES `students`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `studyGroupDetails` ADD CONSTRAINT `studygroupdetails_ibfk_3` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `studyGroups` ADD CONSTRAINT `studygroups_ibfk_1` FOREIGN KEY (`classId`) REFERENCES `class`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `studyGroups` ADD CONSTRAINT `studygroups_ibfk_2` FOREIGN KEY (`guidanceTypeId`) REFERENCES `guidanceTypes`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `studyGroups` ADD CONSTRAINT `studygroups_ibfk_3` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `tentorNotAvailable` ADD CONSTRAINT `tentornotavailable_ibfk_1` FOREIGN KEY (`tentorId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `tentorNotAvailable` ADD CONSTRAINT `tentornotavailable_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `tentorSkills` ADD CONSTRAINT `tentorskills_ibfk_1` FOREIGN KEY (`tentorId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `tentorSkills` ADD CONSTRAINT `tentorskills_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `universities` ADD CONSTRAINT `universities_ibfk_1` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `userHasRoles` ADD CONSTRAINT `userhasroles_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `userHasRoles` ADD CONSTRAINT `userhasroles_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `userHasRoles` ADD CONSTRAINT `userhasroles_ibfk_3` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
+
+-- AddForeignKey
+ALTER TABLE `users` ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`roleId`) REFERENCES `roles`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+-- AddForeignKey
+ALTER TABLE `users` ADD CONSTRAINT `users_ibfk_2` FOREIGN KEY (`userCreate`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE SET NULL;
 

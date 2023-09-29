@@ -2,12 +2,12 @@ import express from "express";
 import { deleteData, getData, getDataById, postData, updateData } from "#controllers/masters/UserController"
 import  userDataValidateSchemaBased from "#root/validations/masters/UserValidation";
 import validationMessage from "#root/validations/Validate";
-const login = express.Router()
+const route = express.Router()
 
-login.get('/', getData);
-login.post('/',  validationMessage(userDataValidateSchemaBased), postData);
-login.put('/:id', updateData);
-login.delete('/:id', deleteData);
-login.get('/:id', getDataById);
+route.get('/', getData);
+route.post('/',  validationMessage(userDataValidateSchemaBased), postData);
+route.put('/:id', updateData);
+route.delete('/:id', deleteData);
+route.get('/:id', getDataById);
 
-export default login
+export default route
