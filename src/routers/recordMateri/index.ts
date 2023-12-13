@@ -1,0 +1,1 @@
+export { default as RecordMateri } from '#routers/recordMateri/RecordMateriRoute'

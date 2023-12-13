@@ -3,13 +3,13 @@ import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
-import { ClassTypeQueryInterface } from "#root/interfaces/ClassTypeInterface";
+import { ClassTypeQueryInterface } from "#root/interfaces/masters/ClassTypeInterface";
 
 const getData = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, res:Response) => {
     try {
         const query = req.query;
         // PAGING
-        const take:number = parseInt(query.limit ?? 20 )
+        const take:number = parseInt(query.limit ?? 2 )
         const page:number = parseInt(query.page ?? 1 );
         const skip:number = (page-1)*take
         // FILTER
@@ -27,6 +27,9 @@ const getData = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, res:Res
             where: {
                 ...filter
             },
+            orderBy: {
+                createdAt: 'desc'
+            },
             skip: skip,
             take: take
         });
@@ -35,11 +38,12 @@ const getData = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, res:Res
                 ...filter
             }
         })
+        
         res.status(200).json({
             status: true,
             message: "successfully in getting class type data",
             data: {
-                users: data,
+                classType: data,
                 info:{
                     page: page,
                     limit: take,
@@ -62,12 +66,14 @@ const getData = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, res:Res
 const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
-        await Model.classTypes.create({data: data});
+        await Model.classTypes.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
         res.status(200).json({
             status: true,
             message: 'successfully in created class type data'
         })
     } catch (error) {
+        console.log({error});
+        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -150,7 +156,48 @@ const getDataById = async (req:Request, res:Response) => {
             status: true,
             message: 'successfully in get class type data',
             data: {
-                users: model
+                classType: model
+            }
+        })
+    } catch (error) {
+        let message = {
+            status:500,
+            message: { msg: `${error}` }
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            message =  await handleValidationError(error)
+        }
+        res.status(message.status).json({
+            status: false,
+            errors: [
+                message.message
+            ]
+        })
+    }
+}
+
+const getDataSelect = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, res:Response) => {
+    try {
+        const query = req.query
+        const model = await Model.classTypes.findMany({
+            where: {
+                name: {
+                    contains: query.name
+                }
+            }
+        })
+        let response:any=[]
+        for (const value of model){
+            response=[...response, {
+                value: value.id,
+                label: value.name
+            }]
+        }
+        res.status(200).json({
+            status: true,
+            message: 'successfully in get class type data',
+            data: {
+                classType: response
             }
         })
     } catch (error) {
@@ -175,5 +222,6 @@ export {
     postData,
     updateData,
     deleteData,
-    getDataById
+    getDataById,
+    getDataSelect
 }

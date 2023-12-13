@@ -8,46 +8,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// This model has been renamed to 'ClassMaster' during introspection, because the original name 'class' is reserved.
-model ClassMaster {
-  id          String        @id @db.VarChar(36) @default(uuid())
+/// This model has been renamed to 'classMaster' during introspection, because the original name 'class' is reserved.
+model classMaster {
+  id          String        @id @default(uuid()) @db.VarChar(36)
   code        String?       @db.VarChar(15)
   name        String        @db.VarChar(25)
-  classTypeId String?       @db.VarChar(36)
+  classTypeId String        @db.VarChar(36)
   method      class_method? @default(online)
   description String?       @db.VarChar(50)
-  useraCreate String?       @db.VarChar(36)
+  userCreate  String?       @db.VarChar(36)
   createdAt   DateTime?     @default(now()) @db.DateTime(0)
   updatedAt   DateTime?     @default(now()) @db.DateTime(0)
   deletedAt   DateTime?     @db.DateTime(0)
-  classTypes  classTypes?   @relation(fields: [classTypeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "class_ibfk_2")
-  users       users?        @relation(fields: [useraCreate], references: [id], onUpdate: SetNull, map: "class_ibfk_3")
+  classTypes  classTypes    @relation(fields: [classTypeId], references: [id], onUpdate: Restrict, map: "class_ibfk_2")
+  users       users?        @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "class_ibfk_3")
   registers   registers[]
   studyGroups studyGroups[]
 
   @@index([classTypeId], map: "classTypeId")
-  @@index([useraCreate], map: "useraCreate")
+  @@index([userCreate], map: "useraCreate")
   @@map("class")
 }
 
 model classTypes {
-  id           String         @id @db.VarChar(36) @default(uuid())
-  code         String?        @db.VarChar(15)
-  name         String?        @db.VarChar(25)
-  price        Decimal?       @db.Decimal(14, 3)
-  description  String?        @db.VarChar(50)
-  useraCreate  String?        @db.VarChar(36)
-  createdAt    DateTime?      @default(now()) @db.DateTime(0)
-  updatedAt    DateTime?      @default(now()) @db.DateTime(0)
-  deletedAt    DateTime?      @db.DateTime(0)
-  ClassMaster ClassMaster[]
-  users        users?         @relation(fields: [useraCreate], references: [id], onUpdate: SetNull, map: "classtypes_ibfk_1")
+  id          String        @id @default(uuid()) @db.VarChar(36)
+  code        String?       @db.VarChar(15)
+  name        String?       @db.VarChar(25)
+  price       Decimal?      @db.Decimal(14, 3)
+  description String?       @db.VarChar(50)
+  userCreate  String?       @db.VarChar(36)
+  createdAt   DateTime?     @default(now()) @db.DateTime(0)
+  updatedAt   DateTime?     @default(now()) @db.DateTime(0)
+  deletedAt   DateTime?     @db.DateTime(0)
+  classMaster classMaster[]
+  users       users?        @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "classtypes_ibfk_1")
 
-  @@index([useraCreate], map: "useraCreate")
+  @@index([userCreate], map: "useraCreate")
 }
 
 model courses {
-  id          String      @id @db.VarChar(36) @default(uuid())
+  id          String      @id @default(uuid()) @db.VarChar(36)
   majorId     String?     @db.VarChar(36)
   code        String?     @db.VarChar(50)
   name        String?     @db.VarChar(150)
@@ -59,16 +59,17 @@ model courses {
   majors      majors?     @relation(fields: [majorId], references: [id], onDelete: Cascade, map: "courses_ibfk_1")
   users       users?      @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "courses_ibfk_2")
   materials   materials[]
+  schedules   schedules[]
 
   @@index([majorId], map: "majorId")
   @@index([userCreate], map: "userCreate")
 }
 
 model guidanceTypes {
-  id          String              @id @db.VarChar(36) @default(uuid())
+  id          String              @id @default(uuid()) @db.VarChar(50)
   name        String?             @db.VarChar(150)
   total       Int?
-  type        guidanceTypes_type?
+  type        guidanceTypes_type? @default(regular)
   userCreate  String?             @db.VarChar(36)
   createdAt   DateTime?           @default(now()) @db.DateTime(0)
   updatedAt   DateTime?           @default(now()) @db.DateTime(0)
@@ -81,45 +82,46 @@ model guidanceTypes {
 }
 
 model locations {
-  id          String      @id @db.VarChar(36) @default(uuid())
-  name        String?     @db.VarChar(150)
-  description String?     @db.VarChar(150)
-  userCreate  String?     @db.VarChar(36)
-  createdAt   DateTime?   @default(now()) @db.DateTime(0)
-  updatedAt   DateTime?   @default(now()) @db.DateTime(0)
-  deletedAt   DateTime?   @db.DateTime(0)
-  users       users?      @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "locations_ibfk_1")
-  registers   registers[]
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  name        String?   @db.VarChar(150)
+  description String?   @db.VarChar(150)
+  userCreate  String?   @db.VarChar(36)
+  createdAt   DateTime? @default(now()) @db.DateTime(0)
+  updatedAt   DateTime? @default(now()) @db.DateTime(0)
+  deletedAt   DateTime? @db.DateTime(0)
+  users       users?    @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "locations_ibfk_1")
 
   @@index([userCreate], map: "userCreate")
 }
 
 model majors {
-  id           String        @id @db.VarChar(36) @default(uuid())
-  universityId String?       @db.VarChar(36)
-  code         String?       @db.VarChar(50)
-  name         String?       @db.VarChar(150)
-  description  String?       @db.VarChar(255)
-  userCreate   String?       @db.VarChar(36)
-  createdAt    DateTime?     @default(now()) @db.DateTime(0)
-  updatedAt    DateTime?     @default(now()) @db.DateTime(0)
-  deletedAt    DateTime?     @db.DateTime(0)
+  id           String       @id @default(uuid()) @db.VarChar(36)
+  universityId String       @db.VarChar(36)
+  code         String?      @db.VarChar(50)
+  name         String       @db.VarChar(150)
+  description  String?      @db.VarChar(255)
+  userCreate   String?      @db.VarChar(36)
+  createdAt    DateTime?    @default(now()) @db.DateTime(0)
+  updatedAt    DateTime?    @default(now()) @db.DateTime(0)
+  deletedAt    DateTime?    @db.DateTime(0)
   courses      courses[]
-  universities universities? @relation(fields: [universityId], references: [id], onDelete: Cascade, map: "majors_ibfk_1")
-  users        users?        @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "majors_ibfk_2")
+  universities universities @relation(fields: [universityId], references: [id], onDelete: Cascade, map: "majors_ibfk_1")
+  users        users?       @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "majors_ibfk_2")
 
   @@index([universityId], map: "universityId")
   @@index([userCreate], map: "userCreate")
 }
 
 model materials {
-  id           String         @id @db.VarChar(36) @default(uuid())
+  id           String         @id @default(uuid()) @db.VarChar(36)
+  code         String?        @db.VarChar(100)
   courseId     String?        @db.VarChar(36)
   userCreate   String?        @db.VarChar(36)
   name         String?        @db.VarChar(100)
   createdAt    DateTime?      @default(now()) @db.DateTime(0)
   updatedAt    DateTime?      @default(now()) @db.DateTime(0)
   deletedAt    DateTime?      @db.DateTime(0)
+  description  String?        @db.VarChar(255)
   courses      courses?       @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "materials_ibfk_1")
   users        users?         @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "materials_ibfk_2")
   recordMateri recordMateri[]
@@ -129,7 +131,7 @@ model materials {
 }
 
 model packages {
-  id          String      @id @db.VarChar(36) @default(uuid())
+  id          String      @id @default(uuid()) @db.VarChar(36)
   name        String?     @db.VarChar(150)
   description String?     @db.VarChar(150)
   userCreate  String?     @db.VarChar(36)
@@ -143,7 +145,7 @@ model packages {
 }
 
 model payrollDetails {
-  id         String     @id @db.VarChar(36) @default(uuid())
+  id         String     @id @default(uuid()) @db.VarChar(36)
   payrollId  String?    @db.VarChar(36)
   scheduleId String?    @db.VarChar(36)
   price      Decimal?   @db.Decimal(14, 4)
@@ -161,7 +163,7 @@ model payrollDetails {
 }
 
 model payrolls {
-  id                               String           @id @db.VarChar(36) @default(uuid())
+  id                               String           @id @default(uuid()) @db.VarChar(36)
   userId                           String?          @db.VarChar(36)
   basicSalary                      Decimal?         @db.Decimal(14, 4)
   sessionSalary                    Decimal?         @db.Decimal(14, 4)
@@ -179,7 +181,7 @@ model payrolls {
 }
 
 model permissionNames {
-  id         String    @id @db.VarChar(36) @default(uuid())
+  id         String    @id @default(uuid()) @db.VarChar(36)
   name       String?   @db.VarChar(150)
   group      String?   @db.VarChar(100)
   userCreate String?   @db.VarChar(36)
@@ -192,7 +194,7 @@ model permissionNames {
 }
 
 model permissions {
-  id                 String               @id @db.VarChar(36) @default(uuid())
+  id                 String               @id @default(uuid()) @db.VarChar(36)
   name               String?              @db.VarChar(100)
   action             String?              @db.VarChar(150)
   userCreate         String?              @db.VarChar(36)
@@ -203,7 +205,7 @@ model permissions {
 }
 
 model recordMateri {
-  id          String     @id @db.VarChar(36) @default(uuid())
+  id          String     @id @default(uuid()) @db.VarChar(36)
   date        DateTime?  @db.DateTime(0)
   studentId   String?    @db.VarChar(36)
   materiId    String?    @db.VarChar(36)
@@ -223,45 +225,41 @@ model recordMateri {
 }
 
 model registers {
-  id             String                   @id @db.VarChar(36) @default(uuid())
+  id             String                   @id @default(uuid()) @db.VarChar(36)
   studentId      String?                  @db.VarChar(36)
   classId        String?                  @db.VarChar(36)
-  university     String?                  @db.VarChar(36)
+  university     String?                  @db.VarChar(255)
   amount         Int?
   sessionId      String?                  @db.VarChar(36)
   packageId      String?                  @db.VarChar(36)
   guidanceTypeId String?                  @db.VarChar(36)
-  locationId     String?                  @db.VarChar(36)
+  location       String?                  @db.VarChar(36)
   schoolYearId   String?                  @db.VarChar(36)
-  status         registers_status?        @default(student)
+  status         Int?                     @default(0) @db.SmallInt
   userCreate     String?                  @db.VarChar(36)
   createdAt      DateTime?                @default(now()) @db.DateTime(0)
   updatedAt      DateTime?                @default(now()) @db.DateTime(0)
   deletedAt      DateTime?                @db.DateTime(0)
   invoiceStatus  registers_invoiceStatus? @default(pending)
   students       students?                @relation(fields: [studentId], references: [id], onDelete: Cascade, map: "registers_ibfk_1")
-  ClassMaster   ClassMaster?            @relation(fields: [classId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_2")
-  universities   universities?            @relation(fields: [university], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_3")
+  classMaster    classMaster?             @relation(fields: [classId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_2")
   sessions       sessions?                @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_4")
   packages       packages?                @relation(fields: [packageId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_5")
   guidanceTypes  guidanceTypes?           @relation(fields: [guidanceTypeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_6")
-  locations      locations?               @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_7")
   schoolYears    schoolYears?             @relation(fields: [schoolYearId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_8")
   users          users?                   @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "registers_ibfk_9")
 
   @@index([classId], map: "classId")
   @@index([guidanceTypeId], map: "guidanceTypeId")
-  @@index([locationId], map: "locationId")
   @@index([packageId], map: "packageId")
   @@index([schoolYearId], map: "schoolYearId")
   @@index([sessionId], map: "sessionId")
   @@index([studentId], map: "studentId")
-  @@index([university], map: "university")
   @@index([userCreate], map: "userCreate")
 }
 
 model roleHasPermissions {
-  id           String       @id @db.VarChar(36) @default(uuid())
+  id           String       @id @default(uuid()) @db.VarChar(36)
   roleId       String?      @db.VarChar(36)
   permissionId String?      @db.VarChar(36)
   userCreate   String?      @db.VarChar(36)
@@ -278,7 +276,7 @@ model roleHasPermissions {
 }
 
 model roles {
-  id                            String               @id @db.VarChar(36) @default(uuid())
+  id                            String               @id @default(uuid()) @db.VarChar(36)
   name                          String?              @db.VarChar(100)
   description                   String?              @db.VarChar(255)
   userCreate                    String?              @db.VarChar(36)
@@ -294,48 +292,55 @@ model roles {
 }
 
 model rooms {
-  id          String      @id @db.VarChar(36) @default(uuid())
+  id          String      @id @default(uuid()) @db.VarChar(36)
   code        String?     @db.VarChar(15)
   name        String?     @db.VarChar(25)
   description String?     @db.VarChar(50)
-  useraCreate String?     @db.VarChar(36)
+  userCreate  String?     @db.VarChar(36)
   createdAt   DateTime?   @default(now()) @db.DateTime(0)
   updatedAt   DateTime?   @default(now()) @db.DateTime(0)
   deletedAt   DateTime?   @db.DateTime(0)
-  users       users?      @relation(fields: [useraCreate], references: [id], onUpdate: SetNull, map: "rooms_ibfk_1")
+  users       users?      @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "rooms_ibfk_1")
   schedules   schedules[]
 
-  @@index([useraCreate], map: "useraCreate")
+  @@index([userCreate], map: "useraCreate")
 }
 
 model schedules {
-  id                                String            @id @db.VarChar(36) @default(uuid())
+  id                                String            @id @default(uuid()) @db.VarChar(36)
   studyGroupId                      String            @db.VarChar(36)
   date                              DateTime          @db.DateTime(0)
   tentorId                          String            @db.VarChar(36)
   roomId                            String?           @db.VarChar(36)
   type                              schedules_type?   @default(study)
-  materiId                          String?           @db.VarChar(36)
+  courseId                          String?           @db.VarChar(36)
   method                            schedules_method? @default(online)
+  scheduleType                      String?           @default("regular") @db.VarChar(15)
+  status                            schedules_status? @default(active)
   userCreate                        String?           @db.VarChar(36)
   createdAt                         DateTime?         @default(now()) @db.DateTime(0)
   updatedAt                         DateTime?         @default(now()) @db.DateTime(0)
   deletedAt                         DateTime?         @db.DateTime(0)
   payrollDetails                    payrollDetails[]
+  scheduleDetails                   scheduleDetails[]
   studyGroups                       studyGroups       @relation(fields: [studyGroupId], references: [id], onUpdate: Restrict, map: "schedules_ibfk_1")
-  users_schedules_tentorIdTousers   users             @relation("schedules_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Cascade, map: "schedules_ibfk_2")
+  tentor                            users             @relation("schedules_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Cascade, map: "schedules_ibfk_2")
   rooms                             rooms?            @relation(fields: [roomId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "schedules_ibfk_4")
   users_schedules_userCreateTousers users?            @relation("schedules_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "schedules_ibfk_5")
+  courses                           courses?          @relation(fields: [courseId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "schedules_ibfk_6")
 
   @@index([roomId], map: "roomId")
   @@index([studyGroupId], map: "studyGroupId")
   @@index([tentorId], map: "tentorId")
   @@index([userCreate], map: "userCreate")
+  @@index([courseId], map: "courseId")
 }
 
 model schoolYears {
-  id          String      @id @db.VarChar(36) @default(uuid())
+  id          String      @id @default(uuid()) @db.VarChar(36)
   name        String?     @db.VarChar(20)
+  startYear   DateTime?   @db.Date
+  endYear     DateTime?   @db.Date
   description String?     @db.VarChar(100)
   userCreate  String?     @db.VarChar(36)
   createdAt   DateTime?   @default(now()) @db.DateTime(0)
@@ -348,7 +353,7 @@ model schoolYears {
 }
 
 model sessions {
-  id         String      @id @db.VarChar(36) @default(uuid())
+  id         String      @id @default(uuid()) @db.VarChar(36)
   code       String?     @db.VarChar(50)
   name       String?     @db.VarChar(50)
   quantity   Int?
@@ -363,13 +368,16 @@ model sessions {
 }
 
 model students {
-  id                String                @id @db.VarChar(36) @default(uuid())
+  id                String                @id @default(uuid()) @db.VarChar(36)
   name              String?               @db.VarChar(100)
   studyProgram      String?               @db.VarChar(100)
   phone             String?               @db.VarChar(15)
   school            String?               @db.VarChar(100)
-  placeBird         String?               @db.VarChar(100)
+  placeBirth        String?               @db.VarChar(100)
   dateBirth         DateTime?             @db.Date
+  country           String?               @db.VarChar(100)
+  province          String?               @db.VarChar(100)
+  city              String?               @db.VarChar(100)
   address           String?               @db.Text
   gender            students_gender?
   classGrade        String?               @db.VarChar(50)
@@ -383,8 +391,10 @@ model students {
   createdAt         DateTime?             @default(now()) @db.DateTime(0)
   updatedAt         DateTime?             @default(now()) @db.DateTime(0)
   deletedAt         DateTime?             @db.DateTime(0)
+  email             String?               @db.VarChar(100)
   recordMateri      recordMateri[]
   registers         registers[]
+  scheduleDetails   scheduleDetails[]
   users             users?                @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "students_ibfk_1")
   studyGroupDetails studyGroupDetails[]
 
@@ -392,7 +402,7 @@ model students {
 }
 
 model studyGroupDetails {
-  id           String       @id @db.VarChar(36) @default(uuid())
+  id           String       @id @default(uuid()) @db.VarChar(36)
   studyGroupId String?      @db.VarChar(36)
   studentId    String?      @db.VarChar(36)
   userCreate   String?      @db.VarChar(36)
@@ -409,7 +419,7 @@ model studyGroupDetails {
 }
 
 model studyGroups {
-  id                String              @id @db.VarChar(36) @default(uuid())
+  id                String              @id @default(uuid()) @db.VarChar(36)
   name              String?             @db.VarChar(255)
   classId           String?             @db.VarChar(36)
   guidanceTypeId    String?             @db.VarChar(36)
@@ -420,7 +430,7 @@ model studyGroups {
   deletedAt         DateTime?           @db.DateTime(0)
   schedules         schedules[]
   studyGroupDetails studyGroupDetails[]
-  ClassMaster      ClassMaster?       @relation(fields: [classId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "studygroups_ibfk_1")
+  classMaster       classMaster?        @relation(fields: [classId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "studygroups_ibfk_1")
   guidanceTypes     guidanceTypes?      @relation(fields: [guidanceTypeId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "studygroups_ibfk_2")
   users             users?              @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "studygroups_ibfk_3")
 
@@ -430,16 +440,16 @@ model studyGroups {
 }
 
 model tentorNotAvailable {
-  id                                         String    @id @db.VarChar(36) @default(uuid())
+  id                                         String    @id @default(uuid()) @db.VarChar(36)
   tentorId                                   String?   @db.VarChar(36)
-  startDate                                  DateTime? @db.DateTime(0)
-  untilDate                                  DateTime? @db.DateTime(0)
+  startDate                                  DateTime? @db.Timestamp(0)
+  untilDate                                  DateTime? @db.Timestamp(0)
   description                                String?   @db.VarChar(255)
   userCreate                                 String?   @db.VarChar(36)
   createdAt                                  DateTime? @default(now()) @db.DateTime(0)
   updatedAt                                  DateTime? @default(now()) @db.DateTime(0)
   deletedAt                                  DateTime? @default(now()) @db.DateTime(0)
-  users_tentorNotAvailable_tentorIdTousers   users?    @relation("tentorNotAvailable_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "tentornotavailable_ibfk_1")
+  userTentor                                 users?    @relation("tentorNotAvailable_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "tentornotavailable_ibfk_1")
   users_tentorNotAvailable_userCreateTousers users?    @relation("tentorNotAvailable_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "tentornotavailable_ibfk_2")
 
   @@index([tentorId], map: "tentorId")
@@ -447,7 +457,7 @@ model tentorNotAvailable {
 }
 
 model tentorSkills {
-  id                                   String    @id @db.VarChar(36) @default(uuid())
+  id                                   String    @id @default(uuid()) @db.VarChar(36)
   tentorId                             String?   @db.VarChar(36)
   courseId                             String?   @db.VarChar(36)
   description                          String?   @db.VarChar(255)
@@ -463,23 +473,22 @@ model tentorSkills {
 }
 
 model universities {
-  id          String      @id @db.VarChar(36) @default(uuid())
-  name        String?     @db.VarChar(255)
-  code        String?     @db.VarChar(50)
-  description String?     @db.VarChar(255)
-  userCreate  String?     @db.VarChar(36)
-  createdAt   DateTime?   @default(now()) @db.DateTime(0)
-  updatedAt   DateTime?   @default(now()) @db.DateTime(0)
-  deletedAt   DateTime?   @db.DateTime(0)
+  id          String    @id @default(uuid()) @db.VarChar(36)
+  name        String?   @db.VarChar(255)
+  code        String?   @db.VarChar(50)
+  description String?   @db.VarChar(255)
+  userCreate  String?   @db.VarChar(36)
+  createdAt   DateTime? @default(now()) @db.DateTime(0)
+  updatedAt   DateTime? @default(now()) @db.DateTime(0)
+  deletedAt   DateTime? @db.DateTime(0)
   majors      majors[]
-  registers   registers[]
-  users       users?      @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "universities_ibfk_1")
+  users       users?    @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "universities_ibfk_1")
 
   @@index([userCreate], map: "userCreate")
 }
 
 model userHasRoles {
-  id                                   String    @id @db.VarChar(36) @default(uuid())
+  id                                   String    @id @default(uuid()) @db.VarChar(36)
   roleId                               String?   @db.VarChar(36)
   userId                               String?   @db.VarChar(36)
   userCreate                           String?   @db.VarChar(36)
@@ -487,7 +496,7 @@ model userHasRoles {
   updatedAt                            DateTime? @default(now()) @db.DateTime(0)
   deletedAt                            DateTime? @db.DateTime(0)
   roles                                roles?    @relation(fields: [roleId], references: [id], onDelete: Cascade, map: "userhasroles_ibfk_1")
-  users_userHasRoles_userIdTousers     users?    @relation("userHasRoles_userIdTousers", fields: [userId], references: [id], onDelete: Cascade, map: "userhasroles_ibfk_2")
+  userTentor                           users?    @relation("userHasRoles_userIdTousers", fields: [userId], references: [id], onDelete: Cascade, map: "userhasroles_ibfk_2")
   users_userHasRoles_userCreateTousers users?    @relation("userHasRoles_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "userhasroles_ibfk_3")
 
   @@index([roleId], map: "roleId")
@@ -496,7 +505,7 @@ model userHasRoles {
 }
 
 model users {
-  id                                                      String               @id @db.VarChar(36) @default(uuid())
+  id                                                      String               @id @default(uuid()) @db.VarChar(36)
   name                                                    String?              @db.VarChar(150)
   email                                                   String?              @db.VarChar(255)
   username                                                String?              @db.VarChar(255)
@@ -512,7 +521,7 @@ model users {
   createdAt                                               DateTime?            @default(now()) @db.DateTime(0)
   updatedAt                                               DateTime?            @default(now()) @db.DateTime(0)
   deletedAt                                               DateTime?            @db.DateTime(0)
-  ClassMaster                                            ClassMaster[]
+  classMaster                                             classMaster[]
   classTypes                                              classTypes[]
   courses                                                 courses[]
   guidanceTypes                                           guidanceTypes[]
@@ -551,9 +560,19 @@ model users {
   @@index([userCreate], map: "userCreate")
 }
 
-enum guidanceTypes_type {
-  private
-  reguler
+model scheduleDetails {
+  id         String     @id @default(uuid()) @db.VarChar(36)
+  scheduleId String?    @db.VarChar(36)
+  studentId  String?    @db.VarChar(36)
+  userCreate String?    @db.VarChar(36)
+  createdAt  DateTime?  @db.DateTime(0)
+  updatedAt  DateTime?  @db.DateTime(0)
+  deletedAt  DateTime?  @db.DateTime(0)
+  schedules  schedules? @relation(fields: [scheduleId], references: [id], onDelete: Cascade, map: "scheduledetails_ibfk_1")
+  students   students?  @relation(fields: [studentId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "scheduledetails_ibfk_2")
+
+  @@index([scheduleId], map: "scheduleId")
+  @@index([studentId], map: "studentId")
 }
 
 enum class_method {
@@ -571,27 +590,33 @@ enum schedules_method {
   offline
 }
 
-enum students_gender {
-  laki_laki @map("laki-laki")
-  perempuan
-}
-
 enum users_userType {
   admin
   tentor
 }
 
-enum registers_status {
-  student
-  alumni
-}
-
-enum students_statusStudy {
-  study
-  alumni
-}
-
 enum registers_invoiceStatus {
   pending
   generated
+}
+
+enum guidanceTypes_type {
+  private
+  regular
+}
+
+enum students_statusStudy {
+  pelajar
+  alumni
+}
+
+enum students_gender {
+  laki_laki
+  perempuan
+}
+
+enum schedules_status {
+  active
+  non_active
+  cancel
 }

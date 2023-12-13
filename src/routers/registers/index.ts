@@ -1,0 +1,1 @@
+export { default as Register } from '#routers/registers/RegisterRoute'

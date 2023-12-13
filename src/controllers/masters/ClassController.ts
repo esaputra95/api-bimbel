@@ -26,6 +26,9 @@ const getData = async (req:Request<{}, {}, {}, ClassMasterQueryInterface>, res:R
             where: {
                 ...filter
             },
+            include: {
+                classTypes: true
+            },
             skip: skip,
             take: take
         });
@@ -38,7 +41,7 @@ const getData = async (req:Request<{}, {}, {}, ClassMasterQueryInterface>, res:R
             status: true,
             message: "successfully in getting class data",
             data: {
-                users: data,
+                classMaster: data,
                 info:{
                     page: page,
                     limit: take,
@@ -142,14 +145,70 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.classMaster.findUnique({
             where: {
                 id: req.params.id
+            },
+            include: {
+                classTypes: true
             }
         })
+        let method = model?.method === 'offline' ? 
+            { value: 'offline', label:'Offline'} : 
+            { value: 'offline', label:'Online'} 
+        let data = {
+            ...model,
+            classType: {
+                value: model?.classTypes?.id,
+                label: model?.classTypes?.name
+            },
+            method: method
+        }
+        delete data.classTypes
         if(!model) throw new Error('data not found')
         res.status(200).json({
             status: true,
             message: 'successfully in get class data',
             data: {
-                users: model
+                classMaster: data
+            }
+        })
+    } catch (error) {
+        let message = {
+            status:500,
+            message: { msg: `${error}` }
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            message =  await handleValidationError(error)
+        }
+        res.status(message.status).json({
+            status: false,
+            errors: [
+                message.message
+            ]
+        })
+    }
+}
+
+const getDataSelect = async (req:Request<{}, {}, {}, ClassMasterQueryInterface>, res:Response) => {
+    try {
+        const query = req.query
+        const model = await Model.classMaster.findMany({
+            where: {
+                name: {
+                    contains: query.name
+                }
+            }
+        })
+        let response:any=[]
+        for (const value of model){
+            response=[...response, {
+                value: value.id,
+                label: value.name
+            }]
+        }
+        res.status(200).json({
+            status: true,
+            message: 'successfully in get class type data',
+            data: {
+                class: response
             }
         })
     } catch (error) {
@@ -174,5 +233,6 @@ export {
     postData,
     updateData,
     deleteData,
-    getDataById
+    getDataById,
+    getDataSelect
 }

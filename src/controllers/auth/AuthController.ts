@@ -13,15 +13,16 @@ export const Login = async (req:Request, res:Response) => {
             }
         });
         if(!user) throw new Error('Username or password incorrect')
-        const match = bcrypt.compare('123456789', user.password ?? '')
+        const match = await bcrypt.compare(data.password, user.password ?? '')
         if(!match) throw new Error('Username or password incorrect')
         const accessToken = sign({
             id: user.id,
             username: user.username,
-            name: user.name
+            name: user.name,
+            userType: user.userType
         }, '1234567890');
         res.json({
-            success: true,
+            status: true,
             message: "OK",
             data: {
                 token: accessToken,
@@ -30,7 +31,7 @@ export const Login = async (req:Request, res:Response) => {
         })
     } catch (error) {
         res.status(404).json({
-            success: false,
+            status: false,
             message: "Unauthorized",
             error: {
                 displayMessage: "Your username or password is incorect"
