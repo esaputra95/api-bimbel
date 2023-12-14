@@ -223,18 +223,50 @@ const getStudyGroup = async (req:Request, res:Response) => {
         const query = req.query;
         let filterSchedule:any = {}
         let filterStudyGroup:any = {} 
-        query.tentorId ? filterSchedule = [ ...filterSchedule, { tentorId: query.tentorId }] : null
-        query.name ? filterStudyGroup = [ ...filterStudyGroup, { name: query.name }] : null
-        const data = await Model.schedules.findMany({
+        query.tentorId ? filterSchedule = { ...filterSchedule, tentorId: query.tentorId } : null
+        query.name ? filterStudyGroup = { ...filterStudyGroup, name: query.name } : null
+        const data = await Model.studyGroups.findMany({
             where: {
-                 ...filterSchedule,
-                 studyGroups: {
-                    ...filterStudyGroup
-                 }
+                name: {
+                    contains:query.name+''
+                },
+                schedules: {
+                    some: {
+                        tentorId: query.tentorId+''
+                    }
+                }
+            },
+        });
+
+        let response:any=[]
+        for (const value of data){
+            response=[...response, {
+                value: value.id,
+                label: value.name
+            }]
+        }
+
+        res.status(200).json({
+            status: true,
+            message: 'successfully in get record material data sds',
+            data: {
+                studyGroup: response
             }
         })
     } catch (error) {
-        
+        let message = {
+            status:500,
+            message: { msg: `${error}` }
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            message =  await handleValidationError(error)
+        }
+        res.status(message.status).json({
+            status: false,
+            errors: [
+                message.message
+            ]
+        })
     }
 }
 
