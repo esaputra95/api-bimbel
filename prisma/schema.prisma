@@ -205,23 +205,26 @@ model permissions {
 }
 
 model recordMateri {
-  id          String     @id @default(uuid()) @db.VarChar(36)
-  date        DateTime?  @db.DateTime(0)
-  studentId   String?    @db.VarChar(36)
-  materiId    String?    @db.VarChar(36)
-  description String?    @db.Text
-  advice      String?    @db.Text
-  userCreate  String?    @db.VarChar(36)
-  createdAt   DateTime?  @default(now()) @db.DateTime(0)
-  updatedAt   DateTime?  @default(now()) @db.DateTime(0)
-  deletedAt   DateTime?  @db.DateTime(0)
-  students    students?  @relation(fields: [studentId], references: [id], onDelete: Cascade, map: "recordmateri_ibfk_1")
-  materials   materials? @relation(fields: [materiId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "recordmateri_ibfk_2")
-  users       users?     @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "recordmateri_ibfk_3")
+  id               String           @id @default(uuid()) @db.VarChar(36)
+  date             DateTime?        @db.DateTime(0)
+  studentId        String?          @db.VarChar(36)
+  materiId         String?          @db.VarChar(36)
+  description      String?          @db.Text
+  advice           String?          @db.Text
+  userCreate       String?          @db.VarChar(36)
+  createdAt        DateTime?        @default(now()) @db.DateTime(0)
+  updatedAt        DateTime?        @default(now()) @db.DateTime(0)
+  deletedAt        DateTime?        @db.DateTime(0)
+  scheduleDetailId String?          @db.VarChar(36)
+  students         students?        @relation(fields: [studentId], references: [id], onDelete: Cascade, map: "recordmateri_ibfk_1")
+  materials        materials?       @relation(fields: [materiId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "recordmateri_ibfk_2")
+  users            users?           @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "recordmateri_ibfk_3")
+  scheduleDetails  scheduleDetails? @relation(fields: [scheduleDetailId], references: [id], onDelete: Cascade, map: "recordmateri_ibfk_4")
 
   @@index([materiId], map: "materiId")
   @@index([studentId], map: "studentId")
   @@index([userCreate], map: "userCreate")
+  @@index([scheduleDetailId], map: "scheduleDetailId")
 }
 
 model registers {
@@ -561,15 +564,16 @@ model users {
 }
 
 model scheduleDetails {
-  id         String     @id @default(uuid()) @db.VarChar(36)
-  scheduleId String?    @db.VarChar(36)
-  studentId  String?    @db.VarChar(36)
-  userCreate String?    @db.VarChar(36)
-  createdAt  DateTime?  @db.DateTime(0)
-  updatedAt  DateTime?  @db.DateTime(0)
-  deletedAt  DateTime?  @db.DateTime(0)
-  schedules  schedules? @relation(fields: [scheduleId], references: [id], onDelete: Cascade, map: "scheduledetails_ibfk_1")
-  students   students?  @relation(fields: [studentId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "scheduledetails_ibfk_2")
+  id           String         @id @default(uuid()) @db.VarChar(36)
+  scheduleId   String?        @db.VarChar(36)
+  studentId    String?        @db.VarChar(36)
+  userCreate   String?        @db.VarChar(36)
+  createdAt    DateTime?      @db.DateTime(0)
+  updatedAt    DateTime?      @db.DateTime(0)
+  deletedAt    DateTime?      @db.DateTime(0)
+  recordMateri recordMateri[]
+  schedules    schedules?     @relation(fields: [scheduleId], references: [id], onDelete: Cascade, map: "scheduledetails_ibfk_1")
+  students     students?      @relation(fields: [studentId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "scheduledetails_ibfk_2")
 
   @@index([scheduleId], map: "scheduleId")
   @@index([studentId], map: "studentId")

@@ -4,6 +4,7 @@ import {
     getData,
     getDataById,
     getDataSelect,
+    getListStudent,
     getStudyGroup,
     postData,
     updateData
@@ -18,6 +19,7 @@ route.put('/:id', validationMessage(classTypeValidation), updateData);
 route.delete('/:id', deleteData);
 route.get('/select', getDataSelect);
 route.get('/get-study-group', getStudyGroup);
+route.post('/get-list-student', getListStudent);
 route.get('/:id', getDataById);
 
 export default route

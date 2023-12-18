@@ -1,6 +1,3 @@
-import { OptionSelectInterface } from "../GlobalInterface";
-import { ScheduleDetailInterface } from "./ScheduleDetailInterface";
-
 export interface ScheduleInterface {
     id?: string
     studyGroupId: string
