@@ -1,6 +1,7 @@
 export interface UserInterface {
     id: string;
     name: string;
+    studentId:string;
     username: string,
     password: string,
     email?: string | null,

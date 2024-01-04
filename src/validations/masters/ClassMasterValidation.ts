@@ -1,11 +1,12 @@
 import { body } from 'express-validator';
 
 const classMasterValidation = [
-    body("name")
+    body("basicSalary")
         .exists({ checkFalsy: true })
-        .withMessage("Name is required")
-        .isString()
-        .withMessage("Name should be string")
+        .withMessage("Basic Salary is required"),
+    body("sessionSalary")
+        .exists({ checkFalsy: true })
+        .withMessage("Session Salary is required"),
 ]
 
 export default classMasterValidation

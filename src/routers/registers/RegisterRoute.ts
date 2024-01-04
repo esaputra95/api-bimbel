@@ -1,7 +1,12 @@
 import express from "express";
-import { deleteData, getData, getDataById, getDataSelect, postData, updateData } from "#controllers/registers/RegisterController"
-import validationMessage from "#root/validations/Validate";
-import RegisterValidation from "#root/validations/registers/RegisterValidation";
+import {
+    deleteData,
+    getData,
+    getDataById,
+    getDataSelect,
+    postData,
+    updateData
+} from "#controllers/registers/RegisterController";
 const route = express.Router()
 
 route.get('/', getData);

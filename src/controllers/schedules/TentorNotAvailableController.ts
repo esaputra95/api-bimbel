@@ -156,6 +156,8 @@ const deleteData = async (req:Request, res:Response)=> {
             message: 'successfully in deleted Tentor Not Available data'
         })
     } catch (error) {
+        console.log({error});
+        
         let message = {
             status:500,
             message: { msg: `${error}` }

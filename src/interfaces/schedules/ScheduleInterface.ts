@@ -1,3 +1,5 @@
+import { OptionSelectInterface } from "../GlobalInterface"
+
 export interface ScheduleInterface {
     id?: string
     studyGroupId: string
@@ -22,7 +24,7 @@ export enum Type {
 interface ScheduleForm {
     id?: string;
     method: 'online' | 'offline' | null;
-    scheduleType: string;
+    scheduleType: OptionSelectInterface;
     studyGroupId: string;
 }
 

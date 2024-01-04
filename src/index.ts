@@ -22,7 +22,8 @@ import {
     Student
 } from "./routers/masters";
 import { 
-    Register 
+    Register,
+    RegisterFromAdmin 
 } from "./routers/registers";
 import { 
     GuidanceType,
@@ -37,10 +38,13 @@ import {
     TentorNotAvailable
 } from "./routers/schedules";
 import { RecordMateri } from "./routers/recordMateri";
+import { PayrollRoute } from "./routers/payroll";
+import { PayrollReportRoute, RecordMateriReportRoute, StudentReportRoute } from "./routers/reports";
+import { DashboardRoute } from "./routers/dashboard";
 
 const app = express()
-app.use(cors()); // Parse JSON requests
-app.use(bodyParser.json()); // Parse JSON requests
+app.use(cors());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/auth', login)
@@ -54,6 +58,7 @@ app.use('/majors', AccessToken, Major)
 app.use('/courses', AccessToken, Course)
 app.use('/materials', AccessToken, Material)
 app.use('/registers', AccessToken, Register)
+app.use('/register-admin', AccessToken, RegisterFromAdmin)
 app.use('/packages', AccessToken, Package)
 app.use('/guidance-types', AccessToken, GuidanceType)
 app.use('/sessions', AccessToken, Session)
@@ -65,5 +70,12 @@ app.use('/schedule/schedules', AccessToken, Schedule)
 app.use('/schedule/class-information', AccessToken, ClassInformation)
 app.use('/students', AccessToken, Student)
 app.use('/record-materi', AccessToken, RecordMateri)
+app.use('/payrolls', AccessToken, PayrollRoute)
+
+app.use('/report/payroll-reports', AccessToken, PayrollReportRoute)
+app.use('/report/record-materi-reports', AccessToken, RecordMateriReportRoute)
+app.use('/report/student-reports', AccessToken, StudentReportRoute)
+
+app.use('/dashboard', AccessToken, DashboardRoute)
 
 app.listen(3000, ()=> console.log('server run ip 127.0.0.1:3000'))

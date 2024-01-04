@@ -1,15 +1,16 @@
-import { errorType } from "#root/helpers/errorType"
-import { handleValidationError } from "#root/helpers/handleValidationError"
-import Model from "#root/services/PrismaService"
-import { Prisma } from "@prisma/client"
-import { Request, Response } from "express"
+import Model from "#root/services/PrismaService";
+import { Request, Response } from "express";
+import { Prisma } from "@prisma/client";
+import { handleValidationError } from "#root/helpers/handleValidationError";
+import { errorType } from "#root/helpers/errorType";
+import { RegisterQueryInterface } from "#root/interfaces/registers/RegisterInterface";
 
-const getData = async (req:Request, res:Response) => {
+const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Response) => {
     try {
         const query = req.query;
         // PAGING
-        const take:number = parseInt(query.limit+'' ?? 2 )
-        const page:number = parseInt(query.page+'' ?? 1 );
+        const take:number = parseInt(query.limit ?? 2 )
+        const page:number = parseInt(query.page ?? 1 );
         const skip:number = (page-1)*take
         // FILTER
         let filter:any= []
@@ -22,9 +23,15 @@ const getData = async (req:Request, res:Response) => {
                 ]
             }
         }
-        const data = await Model.students.findMany({
+        const data = await Model.registers.findMany({
             where: {
                 ...filter
+            },
+            include: {
+                students: true,
+                packages: true,
+                sessions: true,
+                guidanceTypes: true
             },
             orderBy: {
                 createdAt: 'desc'
@@ -32,7 +39,7 @@ const getData = async (req:Request, res:Response) => {
             skip: skip,
             take: take
         });
-        const total = await Model.students.count({
+        const total = await Model.registers.count({
             where: {
                 ...filter
             }
@@ -40,9 +47,9 @@ const getData = async (req:Request, res:Response) => {
         
         res.status(200).json({
             status: true,
-            message: "successfully in getting students data",
+            message: "successfully in getting class type data",
             data: {
-                student: data,
+                register: data,
                 info:{
                     page: page,
                     limit: take,
@@ -65,10 +72,24 @@ const getData = async (req:Request, res:Response) => {
 const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
-        await Model.students.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
+        const registerData = {
+            studentId: data.studentId,
+            sessionId: data.sessionId,
+            packageId: data.packageId,
+            guidanceTypeId: data.guidanceTypeId,
+            userCreate: res.locals.userId,
+            location: data.location,
+            schoolYearId: data.schoolYearId,
+            status: 1
+        }
+
+        await Model.registers.create({
+            data: registerData
+        })
+        
         res.status(200).json({
             status: true,
-            message: 'successfully in created student data'
+            message: 'successfully in created class type data'
         })
     } catch (error) {
         console.log({error});
@@ -90,7 +111,7 @@ const postData = async (req:Request, res:Response) => {
 const updateData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
-        await Model.students.update({
+        await Model.registers.update({
             where: {
                 id: req.params.id
             },
@@ -98,7 +119,7 @@ const updateData = async (req:Request, res:Response) => {
         });
         res.status(200).json({
             status: true,
-            message: 'successful in updated student data'
+            message: 'successful in updated class type data'
         })
     } catch (error) {
         let message = errorType
@@ -117,14 +138,14 @@ const updateData = async (req:Request, res:Response) => {
 
 const deleteData = async (req:Request, res:Response)=> {
     try {
-        await Model.students.delete({
+        await Model.registers.delete({
             where: {
                 id: req.params.id
             }
         })
         res.status(200).json({
             status: false,
-            message: 'successfully in deleted students data'
+            message: 'successfully in deleted class type data'
         })
     } catch (error) {
         let message = {
@@ -145,7 +166,7 @@ const deleteData = async (req:Request, res:Response)=> {
 
 const getDataById = async (req:Request, res:Response) => {
     try {
-        const model = await Model.students.findUnique({
+        const model = await Model.registers.findUnique({
             where: {
                 id: req.params.id
             }
@@ -153,9 +174,9 @@ const getDataById = async (req:Request, res:Response) => {
         if(!model) throw new Error('data not found')
         res.status(200).json({
             status: true,
-            message: 'successfully in get student data',
+            message: 'successfully in get class type data',
             data: {
-                student: model
+                register: model
             }
         })
     } catch (error) {
@@ -175,33 +196,22 @@ const getDataById = async (req:Request, res:Response) => {
     }
 }
 
-const getDataSelect = async (req:Request, res:Response) => {
+const getDataSelect = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Response) => {
     try {
         const query = req.query
-        const model = await Model.students.findMany({
-            where: {
-                name: {
-                    contains: query.name+''
-                },
-                registers: {
-                    some: {
-                        status: 1
-                    }
-                }
-            }
+        const model = await Model.registers.findMany({
         })
         let response:any=[]
         for (const value of model){
             response=[...response, {
                 value: value.id,
-                label: value.name
             }]
         }
         res.status(200).json({
             status: true,
-            message: 'successfully in get student data',
+            message: 'successfully in get class type data',
             data: {
-                student: response
+                register: response
             }
         })
     } catch (error) {
@@ -221,53 +231,11 @@ const getDataSelect = async (req:Request, res:Response) => {
     }
 }
 
-const getDataSelectAll = async (req:Request, res:Response) => {
-    try {
-        const query = req.query
-        const model = await Model.students.findMany({
-            where: {
-                name: {
-                    contains: query.name+''
-                }
-            }
-        })
-        let response:any=[]
-        for (const value of model){
-            response=[...response, {
-                value: value.id,
-                label: value.name
-            }]
-        }
-        res.status(200).json({
-            status: true,
-            message: 'successfully in get student data',
-            data: {
-                student: response
-            }
-        })
-    } catch (error) {
-        let message = {
-            status:500,
-            message: { msg: `${error}` }
-        }
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-            message =  await handleValidationError(error)
-        }
-        res.status(message.status).json({
-            status: false,
-            errors: [
-                message.message
-            ]
-        })
-    }
-}
-
-export { 
+export {
     getData,
-    getDataById,
     postData,
-    deleteData,
     updateData,
-    getDataSelect,
-    getDataSelectAll
+    deleteData,
+    getDataById,
+    getDataSelect
 }

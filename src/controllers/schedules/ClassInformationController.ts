@@ -1,116 +1,104 @@
-import TimeList from "#root/helpers/timeList";
-import { ClassInformationQuery } from "#root/interfaces/schedules/ClassInformationInterface";
 import Model from "#root/services/PrismaService";
 import { Request, Response } from "express";
-import moment from "moment";
+import moment from 'moment-timezone';
 
-
-const getData = async (req:Request<{}, {}, {}, ClassInformationQuery>, res:Response) => {
+const getData = async (req:Request, res:Response) => {
     try {
-        const query = req.query;
+        const body = req.body;
         let filter:any=[]
-        query.tentorId ? filter=[...filter, {tentorId: query.tentorId}] : null;
-        query.classType ? filter=[...filter, {method: query.classType}] : null;
+        body.tentorId ? filter=[...filter, {tentorId: body.tentorId}] : null;
+        body.classType ? filter=[...filter, {method: body.classType}] : null;
 
-        const data = await Model.rooms.findMany({
-            include: {
-                schedules: {
-                    include: {
-                        courses: true,
-                        tentor: true,
-                        studyGroups: {
-                            include: {
-                                guidanceTypes: true
+        let room:any=[];
+        let event:any=[];
+
+        if(body.type === "offline"){
+            const data = await Model.rooms.findMany({
+                include: {
+                    schedules: {
+                        include: {
+                            courses: true,
+                            tentor: true,
+                            studyGroups: {
+                                include: {
+                                    guidanceTypes: true
+                                }
                             }
                         }
                     }
-                }
-            },
-            where: {
-                schedules: {
-                    every: {
-                        ...filter
+                },
+                where: {
+                    schedules: {
+                        every: {
+                            ...filter,
+                            method: 'offline'
+                        }
                     }
                 }
-            }
-        })
-        let dataSchedule:any = []
-        for (let i = 0; i < data.length; i++) {
-            let jadwal:any  =[]
-            let loop = 0
-            for (let j = 0; j < TimeList.length; j++) {
-                const schedule = data[i].schedules
-                for (let k = 0; k < schedule.length; k++) {
-                    const date1 = moment(schedule[k].date).format('HH:mm:ss')
-                    const date2 = moment(schedule[k].date).add(89, 'minutes').format('HH:mm:ss')
-                    const date = moment('2023-12-11 '+TimeList[j]).format('HH:mm:ss');
-                    if(loop>0){
-                        loop--
-                        continue 
-                    }
-                    if((schedule.length-1)===k && !loop){
-                        jadwal=[...jadwal,
-                            {
-                                status: false,
-                                time: TimeList[j],
-                            }
-                        ];
-                    }
-                    // console.log({date});
-                    // console.log({date1});
-                    // console.log({date2});
-                    
-                    if(date>=date1 && date<date2){
-                    
-                        jadwal=[...jadwal,
-                            {
-                                status: true,
-                                start: date1,
-                                finish: moment(schedule[k].date).add(90, 'minutes').format('HH:mm:ss'),
-                                tentor: schedule[k].tentor.name,
-                                type: schedule[k].studyGroups.guidanceTypes?.name ?? 'Regular',
-                                name: schedule[k].studyGroups.name,
-                                time: TimeList[j],
-                                cols: 4
-                            }
-                        ];
-                        loop=4
-                        break;
-                    }
-                }
-                // break
-            }
-            dataSchedule=[
-                ...dataSchedule, 
-                {room: data[i].name, data: jadwal}
-            ]
-        }
-        
-
-        let dataFinal:any = [];
-        for (let index = 0; index < TimeList.length; index++) {
-            let dataRow:any=[{
-                status:false,
-                time: TimeList[index]
-            }]
-            let d=0
-            for (let indexSchedule = 0; indexSchedule < dataSchedule.length; indexSchedule++) {
-                dataRow=[...dataRow,
+            });
+    
+            for (let i = 0; i < data.length; i++) {
+                room=[
+                    ...room,
                     {
-                        ...dataSchedule[indexSchedule].data[index],
-                        name: dataSchedule[indexSchedule].room
+                        id: data[i].id,
+                        title: data[i].name
                     }
                 ]
-                
+                const schedule = data[i].schedules
+                for (let k = 0; k < schedule.length; k++) {
+                    event=[
+                        ...event,
+                        {
+                            id: schedule[k].id,
+                            title: schedule[k].tentor.name,
+                            start: moment(schedule[k].date).tz("Asia/Jakarta").format(),
+                            end: moment(schedule[k].date).tz("Asia/Jakarta").add(90,'minutes').format(),
+                            resourceId: schedule[k].roomId
+                        }
+                    ]
+                }
             }
-            dataFinal=[...dataFinal, dataRow]
-            
+        }else{
+            const data = await Model.schedules.findMany({
+                include: {
+                    courses: true,
+                    tentor: true,
+                    studyGroups: {
+                        include: {
+                            guidanceTypes: true
+                        }
+                    }
+                },
+                where: {
+                    method: 'online'
+                }
+            });
+            room=[
+                ...room,
+                {
+                    id: '123',
+                    title: 'online'
+                }
+            ]
+            for (let i = 0; i < data.length; i++) {
+                event=[
+                    ...event,
+                    {
+                        id: data[i].id,
+                        title: data[i].tentor.name,
+                        start: moment(data[i].date).tz('Asia/Jakarta').format(),
+                        end: moment(data[i].date).tz('Asia/Jakarta').add(90, 'minutes').format(),
+                        resourceId: '123'
+                    }
+                ];
+            }
         }
         
         res.status(200).json({
             status: true,
             message: 'Success get data schedule (session)',
-            data: dataFinal
+            data: {room, event}
         })
     } catch (error) {
         console.log({error});

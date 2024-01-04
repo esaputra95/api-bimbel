@@ -94,7 +94,7 @@ const postData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Resp
                 courseId: time[index].courseId,
                 method: schedule.method,
                 userCreate: res.locals.user,
-                scheduleType: schedule.scheduleType,
+                scheduleType: schedule.scheduleType.value,
             }
             await Model.schedules.create({
                 data: {
@@ -170,7 +170,7 @@ const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Re
                 courseId: time[index].courseId,
                 method: schedule.method,
                 userCreate: res.locals.user,
-                scheduleType: schedule.scheduleType,
+                scheduleType: schedule.scheduleType.value,
             }
             await Model.schedules.update({
                 data: {
@@ -190,7 +190,7 @@ const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Re
             data: scheduleDetailCreate
         })
 
-        const dataDelete: any[] = idDelete.map(value => value.id);
+        const dataDelete: any[] = idDelete?.map(value => value.id);
         await Model.scheduleDetails.deleteMany({
             where: {
                 id: {
@@ -204,6 +204,8 @@ const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Re
             message: 'successfully in created Schedule data'
         })
     } catch (error) {
+        console.log({error});
+        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

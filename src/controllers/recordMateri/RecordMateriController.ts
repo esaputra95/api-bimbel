@@ -16,7 +16,7 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         const skip:number = (page-1)*take
         // FILTER
         let filter:any= []
-        query.id ? filter = [...filter, {id: { contains: query.name }}] : null
+        query.studentId ? filter = [...filter, {studentId:  query.studentId }] : null
         if(filter.length > 0){
             filter = {
                 OR: [
@@ -28,6 +28,11 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         const data = await Model.recordMateri.findMany({
             where: {
                 ...filter
+            },
+            include: {
+                materials: true,
+                students: true,
+                userTentor: true
             },
             orderBy: {
                 id: 'asc'
@@ -45,7 +50,7 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
             status: true,
             message: "successfully in getting record material data",
             data: {
-                tutor: data,
+                recordMateri: data,
                 info:{
                     page: page,
                     limit: take,
@@ -68,7 +73,55 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
-        await Model.recordMateri.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
+        const detail = data.detail ?? []
+        for (let index = 0; index < detail.length; index++) {
+            const dataPost = {
+                date: moment(data.date).format(),
+                studentId: detail[index].studentId,
+                materiId: detail[index].materiId,
+                description: detail[index].description,
+                advice: detail[index].advice,
+                scheduleDetailId: detail[index].scheduleDetailId,
+                tentorId: data.tentorId
+            };
+            await Model.recordMateri.create({
+                data: dataPost
+            });
+
+            const study = await Model.studyGroups.findFirst({
+                where: {
+                    studyGroupDetails: {
+                        some: {
+                            studentId: detail[index].studentId,
+                        }
+                    },
+                }
+            });
+
+            const record = await Model.recordMateri.count({
+                where: {
+                    studentId: detail[index].studentId
+                }
+            });
+
+            if(study?.total === record){
+                const register = await Model.registers.findFirst({
+                    where: {
+                        studentId: detail[index].studentId
+                    }
+                })
+                await Model.registers.update({
+                    where:{
+                        id: register?.id
+                    },
+                    data: {
+                        status: 0
+                    }
+                })
+            }
+        }
+
+        
         res.status(200).json({
             status: true,
             message: 'successfully in created record material data'
@@ -93,12 +146,24 @@ const postData = async (req:Request, res:Response) => {
 const updateData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
-        await Model.recordMateri.update({
-            where: {
-                id: req.params.id
-            },
-            data: data
-        });
+        const detail = data.detail ?? []
+        for (let index = 0; index < detail.length; index++) {
+            const dataPost = {
+                date: moment(data.date).format(),
+                studentId: detail[index].studentId,
+                materiId: detail[index].materiId,
+                description: detail[index].description,
+                advice: detail[index].advice,
+                scheduleDetailId: detail[index].scheduleDetailId,
+                tentorId: data.tentorId
+            }
+            
+            await Model.recordMateri.update({
+                data: dataPost, where: {
+                    id: req.params.id
+                }
+            })
+        }
         res.status(200).json({
             status: true,
             message: 'successful in updated record material data'
@@ -151,6 +216,13 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.recordMateri.findUnique({
             where: {
                 id: req.params.id
+            },
+            include: {
+                scheduleDetails:{
+                    include: {
+                        schedules: true
+                    }
+                }
             }
         })
         if(!model) throw new Error('data not found')
@@ -158,7 +230,7 @@ const getDataById = async (req:Request, res:Response) => {
             status: true,
             message: 'successfully in get record material data',
             data: {
-                tutor: model
+                recordMateri: model
             }
         })
     } catch (error) {
@@ -223,9 +295,13 @@ const getStudyGroup = async (req:Request, res:Response) => {
     try {
         const query = req.query;
         let filterSchedule:any = {}
-        let filterStudyGroup:any = {} 
-        query.tentorId ? filterSchedule = { ...filterSchedule, tentorId: query.tentorId } : null
+        let filterStudyGroup:any = {}
+        if(res.locals.userType==="tentor"){
+            filterSchedule = { ...filterSchedule, tentorId: res.locals.userId }
+        }
+        
         query.name ? filterStudyGroup = { ...filterStudyGroup, name: query.name } : null
+
         const data = await Model.studyGroups.findMany({
             where: {
                 name: {
@@ -233,7 +309,7 @@ const getStudyGroup = async (req:Request, res:Response) => {
                 },
                 schedules: {
                     some: {
-                        tentorId: query.tentorId+''
+                        ...filterSchedule
                     }
                 }
             },
@@ -275,6 +351,10 @@ const getListStudent = async (req:Request, res:Response) => {
     try {
         const query = req.body;
         const date = moment(query.date).format()
+
+        console.log('ini date : ',date);
+        
+        
         const data = await Model.schedules.findFirst({
             where: {
                 date: {
@@ -288,6 +368,9 @@ const getListStudent = async (req:Request, res:Response) => {
                         recordMateri:  true
                     }
                 }
+            },
+            orderBy: {
+                date: 'asc'
             }
         })
         
