@@ -95,8 +95,6 @@ const postData = async (req:Request<{}, {}, StudyGroupPostInterface, {}>, res:Re
             message: 'successfully in created Study Group data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -131,8 +129,6 @@ const updateData = async (req:Request, res:Response) => {
             message: 'successful in updated Study Group data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

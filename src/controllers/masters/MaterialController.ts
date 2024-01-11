@@ -78,8 +78,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created Material data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

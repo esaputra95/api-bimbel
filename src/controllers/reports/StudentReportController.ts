@@ -22,10 +22,12 @@ const getData = async (req:Request, res:Response) => {
         });
 
         let newData:any=[]
+        let number:number= 1;
         for (const value of data) {
             newData=[
                 ...newData,
                 [
+                    number,
                     value.name,
                     value.gender,
                     value.phone,
@@ -33,7 +35,8 @@ const getData = async (req:Request, res:Response) => {
                     value.city,
                     value.country
                 ]
-            ]
+            ];
+            number++
         } 
         res.status(200).json({
             status: true,
@@ -41,8 +44,6 @@ const getData = async (req:Request, res:Response) => {
             data: newData
         })
     } catch (error) {
-        console.log({error});
-        
         let message = {
             status:500,
             message: { msg: `${error}` }

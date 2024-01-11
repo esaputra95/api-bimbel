@@ -5,61 +5,66 @@ import moment from 'moment-timezone';
 const getData = async (req:Request, res:Response) => {
     try {
         const body = req.body;
-        let filter:any=[]
-        body.tentorId ? filter=[...filter, {tentorId: body.tentorId}] : null;
-        body.classType ? filter=[...filter, {method: body.classType}] : null;
+        let filter:any={}
+        console.log('detail : ', body.tentor);
+        
+        if(res.locals.userType === "admin"){
+            body.tentor ? filter={...filter, tentorId: body.tentor} : null;
+        }else{
+            filter={
+                ...filter,
+                tentorId: res.locals.userId
+            }   
+        }
 
         let room:any=[];
         let event:any=[];
-
         if(body.type === "offline"){
-            const data = await Model.rooms.findMany({
-                include: {
-                    schedules: {
-                        include: {
-                            courses: true,
-                            tentor: true,
-                            studyGroups: {
-                                include: {
-                                    guidanceTypes: true
-                                }
-                            }
-                        }
-                    }
-                },
-                where: {
-                    schedules: {
-                        every: {
-                            ...filter,
-                            method: 'offline'
-                        }
-                    }
-                }
-            });
-    
-            for (let i = 0; i < data.length; i++) {
+            const data = await Model.rooms.findMany()
+            for (const value of data) {
                 room=[
                     ...room,
                     {
-                        id: data[i].id,
-                        title: data[i].name
+                        id: value.id,
+                        title: value.name
                     }
                 ]
-                const schedule = data[i].schedules
-                for (let k = 0; k < schedule.length; k++) {
+
+                const schedule = await Model.schedules.findMany({
+                    where: {
+                        roomId: value.id,
+                        date: {
+                            gte: moment(body.startDate+' 00:00:00').format(),
+                            lte: moment(body.endDate+' 23:59:00').format(),
+                        },
+                        method: 'offline',
+                        ...filter
+                    },
+                    include: {
+                        courses: true,
+                        tentor: true,
+                        studyGroups: {
+                            include: {
+                                guidanceTypes: true
+                            }
+                        }
+                    }
+                });
+
+                for (const valueSchedule of schedule) {
                     event=[
                         ...event,
                         {
-                            id: schedule[k].id,
-                            title: schedule[k].tentor.name,
-                            start: moment(schedule[k].date).tz("Asia/Jakarta").format(),
-                            end: moment(schedule[k].date).tz("Asia/Jakarta").add(90,'minutes').format(),
-                            resourceId: schedule[k].roomId
+                            id: valueSchedule.id,
+                            title: `${valueSchedule.tentor.name} | ${valueSchedule.studyGroups.name}`,
+                            start: moment(valueSchedule.date).tz("Asia/Jakarta").format(),
+                            end: moment(valueSchedule.date).tz("Asia/Jakarta").add(90,'minutes').format(),
+                            resourceId: valueSchedule.roomId
                         }
                     ]
                 }
             }
-        }else{
+        }else if(body.type === "online"){
             const data = await Model.schedules.findMany({
                 include: {
                     courses: true,
@@ -71,7 +76,12 @@ const getData = async (req:Request, res:Response) => {
                     }
                 },
                 where: {
-                    method: 'online'
+                    ...filter,
+                    method: 'online',
+                    date: {
+                        gte: moment(body.startDate+' 00:00:00').format(),
+                        lte: moment(body.endDate+' 23:59:00').format(),
+                    }
                 }
             });
             room=[
@@ -101,7 +111,6 @@ const getData = async (req:Request, res:Response) => {
             data: {room, event}
         })
     } catch (error) {
-        console.log({error});
         res.status(500).json({
             status: false,
             message: "error",

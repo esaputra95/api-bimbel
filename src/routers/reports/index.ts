@@ -1,3 +1,5 @@
 export { default as PayrollReportRoute } from './PayrollReportRoute'
 export { default as RecordMateriReportRoute } from './RecordMateriReportRoute'
 export { default as StudentReportRoute } from './StudentReportRoute'
+export { default as ScheduleReportController } from './ScheduleReportRoute'
+export { default as RegisterReportController } from './RegisterReportRoute'

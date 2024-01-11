@@ -14,12 +14,12 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         const page:number = parseInt(query.page ?? 1 );
         const skip:number = (page-1)*take
         // FILTER
-        let filter:any= []
-        if(filter.length > 0){
-            filter = {
-                OR: [
-                    ...filter
-                ]
+        let filter:any= {}
+
+        if(res.locals.userType !== "admin"){
+            filter={
+                ...filter, 
+                userId: res.locals.userId
             }
         }
 
@@ -113,8 +113,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created Payroll data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -354,6 +352,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         
         let newData:any=[]
         let total:number=0;
+        let number:number=1;
         for (const value of data) {
             let time:any=[];
             let detail={
@@ -371,17 +370,16 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                         time =[
                             ...time,
                             moment(v.recordMateri[0].date).format('DD')
-                            
                         ];
                         break
                     }
                 }
-                
             }
             total+=detail.price*time.length;
             newData=[
                 ...newData,
                 [ 
+                    number,
                     value.name,
                     value.guidanceTypes?.name,
                     time.join(','),
@@ -392,6 +390,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     ''
                 ]
             ]
+            number++
         }
 
         const basic = await Model.payrolls.findFirst({
@@ -405,8 +404,8 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         total+=parseInt(basic?.basicSalary+'')
         newData=[
             ...newData,
-            ['Gaji Pokok', '', '', '', '','', parseFloat(basic?.basicSalary+'').toLocaleString('id-id'), ''],
-            ['Total', '', '', '', '', '', parseFloat((total)+'').toLocaleString('id-id'), ''],
+            ['Gaji Pokok', '', '', '', '', '','', parseFloat(basic?.basicSalary+'').toLocaleString('id-id'), ''],
+            ['Total', '', '', '', '', '', '', parseFloat((total)+'').toLocaleString('id-id'), ''],
         ]
 
         res.status(200).json({

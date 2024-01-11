@@ -204,8 +204,6 @@ const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Re
             message: 'successfully in created Schedule data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

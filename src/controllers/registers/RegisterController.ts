@@ -149,7 +149,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created class type data'
         })
     } catch (error) {
-        console.log({error});
         
         let message = errorType
         message.message.msg = `${error}`
@@ -226,7 +225,13 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.registers.findUnique({
             where: {
                 id: req.params.id
-            }
+            },
+            include: {
+                students: true,
+                packages: true,
+                sessions: true,
+                guidanceTypes: true
+            },
         })
         if(!model) throw new Error('data not found')
         res.status(200).json({
@@ -288,11 +293,21 @@ const getDataSelect = async (req:Request<{}, {}, {}, RegisterQueryInterface>, re
     }
 }
 
+const uploadImage = async (req:Request, res:Response) => {
+    res.status(200).json({
+        code:1,
+        status:200,
+        message: "Successfully get data file",
+        data: req.file?.filename ?? ''
+    })
+}
+
 export {
     getData,
     postData,
     updateData,
     deleteData,
     getDataById,
-    getDataSelect
+    getDataSelect,
+    uploadImage
 }

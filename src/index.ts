@@ -29,7 +29,8 @@ import {
     GuidanceType,
     Package,
     SchoolYear,
-    Session 
+    Session, 
+    Setting
 } from "./routers/settings";
 import { 
     ClassInformation,
@@ -39,8 +40,9 @@ import {
 } from "./routers/schedules";
 import { RecordMateri } from "./routers/recordMateri";
 import { PayrollRoute } from "./routers/payroll";
-import { PayrollReportRoute, RecordMateriReportRoute, StudentReportRoute } from "./routers/reports";
+import { PayrollReportRoute, RecordMateriReportRoute, RegisterReportController, ScheduleReportController, StudentReportRoute } from "./routers/reports";
 import { DashboardRoute } from "./routers/dashboard";
+import upload from "./helpers/uploadImage";
 
 const app = express()
 app.use(cors());
@@ -62,6 +64,7 @@ app.use('/register-admin', AccessToken, RegisterFromAdmin)
 app.use('/packages', AccessToken, Package)
 app.use('/guidance-types', AccessToken, GuidanceType)
 app.use('/sessions', AccessToken, Session)
+app.use('/settings', AccessToken, Setting)
 app.use('/school-years', AccessToken, SchoolYear)
 app.use('/tutors', AccessToken, Tutor)
 app.use('/schedule/tentor-not-available', AccessToken, TentorNotAvailable)
@@ -75,6 +78,11 @@ app.use('/payrolls', AccessToken, PayrollRoute)
 app.use('/report/payroll-reports', AccessToken, PayrollReportRoute)
 app.use('/report/record-materi-reports', AccessToken, RecordMateriReportRoute)
 app.use('/report/student-reports', AccessToken, StudentReportRoute)
+app.use('/report/schedule-reports', AccessToken, ScheduleReportController)
+app.use('/report/register-reports', AccessToken, RegisterReportController)
+
+app.use(express.static('public')); 
+app.use('/images', express.static('src/images'));
 
 app.use('/dashboard', AccessToken, DashboardRoute)
 

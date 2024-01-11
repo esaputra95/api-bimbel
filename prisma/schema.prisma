@@ -35,6 +35,7 @@ model classTypes {
   code        String?       @db.VarChar(15)
   name        String?       @db.VarChar(25)
   price       Decimal?      @db.Decimal(14, 3)
+  quantity    Int?
   description String?       @db.VarChar(50)
   userCreate  String?       @db.VarChar(36)
   createdAt   DateTime?     @default(now()) @db.DateTime(0)
@@ -558,7 +559,7 @@ model users {
   studyGroups                                             studyGroups[]
   tentorNotAvailable_tentorNotAvailable_tentorIdTousers   tentorNotAvailable[] @relation("tentorNotAvailable_tentorIdTousers")
   tentorNotAvailable_tentorNotAvailable_userCreateTousers tentorNotAvailable[] @relation("tentorNotAvailable_userCreateTousers")
-  tentorSkills_tentorSkills_tentorIdTousers               tentorSkills[]       @relation("tentorSkills_tentorIdTousers")
+  tentorSkills                                            tentorSkills[]       @relation("tentorSkills_tentorIdTousers")
   tentorSkills_tentorSkills_userCreateTousers             tentorSkills[]       @relation("tentorSkills_userCreateTousers")
   universities                                            universities[]
   userHasRoles_userHasRoles_userIdTousers                 userHasRoles[]       @relation("userHasRoles_userIdTousers")

@@ -23,30 +23,11 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
                 ]
             }
         }
-        // const data = await Model.users.findMany({
-        //     where: {
-        //         roles_users_roleIdToroles: {
-        //             name: 'tentor'
-        //         }
-        //     },
-        //     include: {
-        //         roles_users_roleIdToroles: {
-        //             where: {
-        //                 name: 'tentor'
-        //             }
-        //         }
-        //     },
-        //     orderBy: {
-        //         createdAt: 'desc'
-        //     },
-        //     skip: skip,
-        //     take: take
-        // });
         const data = await Model.users.findMany({
             where: {
                 userType: 'tentor',
                 ...filter
-            }
+            },
         })
         const total = await Model.users.count({
             where: {
@@ -80,15 +61,27 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
-        await Model.users.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
+        let data = { ...req.body};        
+        delete data.tentorSkills;
+
+        const create = await Model.users.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
+        if(create){
+            for (const value of req.body.tentorSkills) {
+                await Model.tentorSkills.create({
+                    data: {
+                        courseId: value.courseId?.value ?? '',
+                        description: value.description,
+                        tentorId: create.id
+                    }
+                })
+                    
+            }
+        }
         res.status(200).json({
             status: true,
             message: 'successfully in created user data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -164,6 +157,9 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.users.findUnique({
             where: {
                 id: req.params.id
+            },
+            include: {
+                tentorSkills: true
             }
         })
         if(!model) throw new Error('data not found')

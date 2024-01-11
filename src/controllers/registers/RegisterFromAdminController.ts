@@ -92,8 +92,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created class type data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -169,7 +167,13 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.registers.findUnique({
             where: {
                 id: req.params.id
-            }
+            },
+            include: {
+                students: true,
+                packages: true,
+                sessions: true,
+                guidanceTypes: true
+            },
         })
         if(!model) throw new Error('data not found')
         res.status(200).json({

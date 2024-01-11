@@ -16,11 +16,8 @@ const getData = async (req:Request<{}, {}, {}, TentorNotAvailableQueryInterface>
         // FILTER
         let filterUser:any= []
         query.name ? filterUser = [...filterUser, {name: { contains: query.name }}] : null
-        console.log(res.locals);
         let filter:any={}
         if(res.locals.userType==="tentor"){
-            console.log('dsini');
-            
             filter = {...filter, tentorId: { contains: res.locals.userId}};
         }
         if(filterUser.length > 0){
@@ -92,8 +89,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created Tentor Not Available data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -128,8 +123,6 @@ const updateData = async (req:Request, res:Response) => {
             message: 'successful in updated Tentor Not Available data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -156,8 +149,6 @@ const deleteData = async (req:Request, res:Response)=> {
             message: 'successfully in deleted Tentor Not Available data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = {
             status:500,
             message: { msg: `${error}` }

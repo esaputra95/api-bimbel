@@ -71,8 +71,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created student data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -148,6 +146,22 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.students.findUnique({
             where: {
                 id: req.params.id
+            },
+            include: {
+                studyGroupDetails: {
+                    include: {
+                        studyGroups: true
+                    }
+                },
+                registers: {
+                    include: {
+                        guidanceTypes: true,
+                        packages: true,
+                        classMaster: true,
+                        schoolYears: true,
+                        sessions: true
+                    }
+                }
             }
         })
         if(!model) throw new Error('data not found')

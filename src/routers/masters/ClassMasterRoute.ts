@@ -6,7 +6,7 @@ const route = express.Router()
 
 route.get('/', getData);
 route.post('/',  validationMessage(classMasterValidation), postData);
-route.put('/:id', validationMessage(classMasterValidation), updateData);
+route.put('/:id', updateData);
 route.delete('/:id', deleteData);
 route.get('/select', getDataSelect);
 route.get('/:id', getDataById);

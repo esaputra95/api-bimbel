@@ -21,10 +21,12 @@ const getData = async (req:Request, res:Response) => {
 
         let newData:any=[]
         let newTotal:number=0
+        let number:number=1
         for (const value of data) {
             newData=[
                 ...newData,
                 [
+                    number,
                     value.userTentor?.name,
                     value.month,
                     parseFloat(value.basicSalary+'').toLocaleString('id-id'),
@@ -32,6 +34,7 @@ const getData = async (req:Request, res:Response) => {
                     parseFloat(value.total+'').toLocaleString('id-id')
                 ]
             ]
+            number++
             newTotal+=parseInt(value.total+'')
         } 
 
@@ -47,8 +50,6 @@ const getData = async (req:Request, res:Response) => {
             data: newData
         })
     } catch (error) {
-        console.log({error});
-        
         let message = {
             status:500,
             message: { msg: `${error}` }

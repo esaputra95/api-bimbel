@@ -15,13 +15,13 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         const page:number = parseInt(query.page ?? 1 );
         const skip:number = (page-1)*take
         // FILTER
-        let filter:any= []
-        query.studentId ? filter = [...filter, {studentId:  query.studentId }] : null
-        if(filter.length > 0){
+        let filter:any= {}
+        query.studentId ? filter = {...filter, studentId:  query.studentId } : null
+
+        if(res.locals.userType !== "admin"){
             filter = {
-                OR: [
-                    ...filter
-                ]
+                ...filter,
+                tentorId: res.locals.userId
             }
         }
 
@@ -127,8 +127,6 @@ const postData = async (req:Request, res:Response) => {
             message: 'successfully in created record material data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -350,17 +348,15 @@ const getStudyGroup = async (req:Request, res:Response) => {
 const getListStudent = async (req:Request, res:Response) => {
     try {
         const query = req.body;
-        const date = moment(query.date).format()
-
-        console.log('ini date : ',date);
-        
-        
-        const data = await Model.schedules.findFirst({
+        const date = moment(`${query.date} 00:00:00`).format()
+        const date2 = moment(`${query.date2} 23:59:00`).format()
+        const data = await Model.schedules.findMany({
             where: {
                 date: {
+                    lte: date2,
                     gte: date
                 },
-                studyGroupId: query?.groupId['value'] ?? ''
+                tentorId: res.locals.userId
             },
             include: {
                 scheduleDetails: {
@@ -373,21 +369,46 @@ const getListStudent = async (req:Request, res:Response) => {
                 date: 'asc'
             }
         })
-        
-        const scheduleDetail = data?.scheduleDetails ?? [];
+
         let dataDetail:any = [];
-        for (let index = 0; index < scheduleDetail.length; index++) {
-            if(scheduleDetail[index].recordMateri.length===0){
-                dataDetail=[
-                    ...dataDetail,
-                    {
-                        ...scheduleDetail[index],
-                        materiId: data?.courseId
-                    }
-                ]
-            }
+        for (let index = 0; index < data.length; index++) {
+            console.log({date});
             
+            console.log(moment(data[index].date).format());
+            
+            let scheduleDetail= data[index].scheduleDetails
+            for (let indexDetail = 0; indexDetail < data[index].scheduleDetails.length; indexDetail++) {
+                if(scheduleDetail[indexDetail].recordMateri.length===0){
+                    dataDetail=[
+                        ...dataDetail,
+                        {
+                            ...scheduleDetail[indexDetail],
+                            materiId: data[index]?.courseId,
+                            studyGroupId: data[index].studyGroupId
+                        }
+                    ]
+                }
+            }
         }
+        
+        
+        // const scheduleDetail = data?.scheduleDetails ?? [];
+        // let dataDetail:any = [];
+        // for (let index = 0; index < scheduleDetail.length; index++) {
+        //     if(scheduleDetail[index].recordMateri.length===0){
+        //         dataDetail=[
+        //             ...dataDetail,
+        //             {
+        //                 ...scheduleDetail[index],
+        //                 materiId: data?.courseId
+        //             }
+        //         ]
+        //     }
+            
+        // }
+
+        console.log({data});
+        
 
         res.status(200).json({
             status: true,
