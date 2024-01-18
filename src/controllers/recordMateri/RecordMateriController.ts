@@ -72,7 +72,10 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        let data = { ...req.body};
+        if(res.locals.userType!=="admin"){
+            data.tentorId = res.locals.userId
+        }
         const detail = data.detail ?? []
         for (let index = 0; index < detail.length; index++) {
             const dataPost = {
@@ -372,10 +375,6 @@ const getListStudent = async (req:Request, res:Response) => {
 
         let dataDetail:any = [];
         for (let index = 0; index < data.length; index++) {
-            console.log({date});
-            
-            console.log(moment(data[index].date).format());
-            
             let scheduleDetail= data[index].scheduleDetails
             for (let indexDetail = 0; indexDetail < data[index].scheduleDetails.length; indexDetail++) {
                 if(scheduleDetail[indexDetail].recordMateri.length===0){
@@ -391,25 +390,6 @@ const getListStudent = async (req:Request, res:Response) => {
             }
         }
         
-        
-        // const scheduleDetail = data?.scheduleDetails ?? [];
-        // let dataDetail:any = [];
-        // for (let index = 0; index < scheduleDetail.length; index++) {
-        //     if(scheduleDetail[index].recordMateri.length===0){
-        //         dataDetail=[
-        //             ...dataDetail,
-        //             {
-        //                 ...scheduleDetail[index],
-        //                 materiId: data?.courseId
-        //             }
-        //         ]
-        //     }
-            
-        // }
-
-        console.log({data});
-        
-
         res.status(200).json({
             status: true,
             message: 'successfully in get record material data sds',

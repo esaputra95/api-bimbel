@@ -13,9 +13,13 @@ const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Resp
         const page:number = parseInt(query.page ?? 1 );
         const skip:number = (page-1)*take
         // FILTER
-        let filter:any= []
-        query.name ? filter = [...filter, {name: { contains: query.name }}] : null
-        query.code ? filter = [...filter, {code: { contains: query.code }}] : null
+        
+        let filter:any= {}
+        query.name ? filter = {...filter, students:{
+            name: {
+                contains: query.name
+            }
+        }} : null
         if(filter.length > 0){
             filter = {
                 OR: [
@@ -235,11 +239,43 @@ const getDataSelect = async (req:Request<{}, {}, {}, RegisterQueryInterface>, re
     }
 }
 
+const updateModule = async (req:Request, res:Response) => {
+    try {
+        await Model.registers.update({
+            where: {
+                id: req.params.id
+            },
+            data: {
+                ...req.body
+            }
+        });
+        res.status(200).json({
+            status: true,
+            message: 'successfully in get update module register',
+        })
+    } catch (error) {
+        let message = {
+            status:500,
+            message: { msg: `${error}` }
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            message =  await handleValidationError(error)
+        }
+        res.status(message.status).json({
+            status: false,
+            errors: [
+                message.message
+            ]
+        })
+    }
+}
+
 export {
     getData,
     postData,
     updateData,
     deleteData,
     getDataById,
-    getDataSelect
+    getDataSelect,
+    updateModule
 }

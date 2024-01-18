@@ -8,12 +8,10 @@ import {
     postData,
     updateData
 } from "#controllers/payrolls/PayrollController"
-import validationMessage from "#root/validations/Validate";
-import classMasterValidation from "#root/validations/masters/ClassMasterValidation";
 const route = express.Router()
 
 route.get('/', getData);
-route.post('/',  validationMessage(classMasterValidation), postData);
+route.post('/', postData);
 route.put('/:id', updateData);
 route.delete('/:id', deleteData);
 route.post('/data-payroll-session', getDataPayrollSession);

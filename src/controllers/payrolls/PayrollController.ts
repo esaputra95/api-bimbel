@@ -83,7 +83,7 @@ const postData = async (req:Request, res:Response) => {
             basicSalary: data.basicSalary.replace(/,/g, ""),
             sessionSalary: data.sessionSalary.replace(/,/g, ""),
             total: data.total.replace(/,/g,""),
-            month: data.month
+            month: moment(data.month+'-01').format()
         }
 
         let dataPayrollDetails:any = [];
@@ -94,7 +94,8 @@ const postData = async (req:Request, res:Response) => {
                 {
                     scheduleId: dataDetail[index].scheduleId,
                     price: dataDetail[index].price,
-                    userCreate: res.locals.userId
+                    userCreate: res.locals.userId,
+                    totalStudent: dataDetail[index].totalStudent
                 }
             ]
         }
@@ -250,49 +251,52 @@ const getDataById = async (req:Request, res:Response) => {
 
 const getDataPayrollSession = async (req:Request, res:Response) => {
     try {
-        const classType = await Model.classTypes.findMany();
-        let payrollData:any = []
-        let salary:number=0
-        for (const value of classType) {
-            const schedule = await Model.schedules.findMany({
-                where: {
-                    date: {
-                        gte: moment(req.body.month).startOf('month').format(),
-                        lte: moment(req.body.month).endOf('month').format()
-                    },
-                    scheduleType: value.id,
-                    scheduleDetails:{
-                        some: {
-                            recordMateri: {
-                                some: {
-                                    id: {
-                                        not: ''
-                                    },
-                                    tentorId: req.body.tentorId+''
-                                }
-                            }
-                        }
-                    }
+        const schedule = await Model.schedules.findMany({
+            where: {
+                tentorId: req.body.tentorId+'',
+                date: {
+                    gte: moment(req.body.month).startOf('month').format(),
+                    lte: moment(req.body.month).endOf('month').format()
                 },
-                include: {
-                    scheduleDetails: {
-                        include: {
-                            recordMateri: true
-                        }
-                    }
+            },
+            include: {
+                scheduleDetails: {
+                    include: {
+                        recordMateri: true
+                    },
+                    
+                },
+                classTypes: true
+            }
+        });
+        let payrollData:any=[]
+        let salary:number=0;
+        for (const value of schedule) {
+            const scheduleDetail = value.scheduleDetails;
+            let total:number=0
+            for (const valueDetail of scheduleDetail) {
+                if(valueDetail.recordMateri?.[0]?.description){
+                    total++
                 }
-            });
-            for (const valueSchedule of schedule) {
-                salary+=parseFloat(value.price+'');
+            }
+            if(total){
+                const classMaster = await Model.classMaster.findFirst({
+                    where: {
+                        classTypeId: value.scheduleType??'',
+                        quantity: total
+                    }
+                });
+                salary+=parseInt(classMaster?.price+'')
                 payrollData=[
                     ...payrollData,
                     {
-                        scheduleId: valueSchedule.id,
-                        time: moment(valueSchedule.date).format('DD-MM-YYYY'),
-                        type: value.name,
-                        price: value.price
+                        scheduleId: value.id,
+                        time: moment(value.date).format('DD-MM-YYYY'),
+                        type: value.classTypes?.name,
+                        price: classMaster?.price,
+                        totalStudent: total
                     }
-                ]
+                ];
             }
         }
         
@@ -398,14 +402,22 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                 id: req.params.id
             },
             include: {
-                userTentor: true
+                userTentor: {
+                    include: {
+                        tentorSkills: {
+                            include: {
+                                courses: true
+                            }
+                        }
+                    }
+                }
             }
         })
         total+=parseInt(basic?.basicSalary+'')
         newData=[
             ...newData,
-            ['Gaji Pokok', '', '', '', '', '','', parseFloat(basic?.basicSalary+'').toLocaleString('id-id'), ''],
-            ['Total', '', '', '', '', '', '', parseFloat((total)+'').toLocaleString('id-id'), ''],
+            ['','Gaji Pokok', '', '', '', '','', parseFloat(basic?.basicSalary+'').toLocaleString('id-id'), ''],
+            ['','Total',  '', '', '', '', '', parseFloat((total)+'').toLocaleString('id-id'), ''],
         ]
 
         res.status(200).json({
@@ -414,6 +426,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
             data: newData,
             tentor: [
                 [`Nama Tentor : ${basic?.userTentor?.name}`],
+                [`Subject : ${basic?.userTentor?.tentorSkills.map(item=>item.courses?.name)}`],
                 [`Bulan : ${moment(basic?.month+'-01').format('MMMM YYYY')}`],
             ]
         })

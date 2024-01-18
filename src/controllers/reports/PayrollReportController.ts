@@ -15,7 +15,8 @@ const getData = async (req:Request, res:Response) => {
                 userId: req.body.data?.tentor?.value
             },
             include: {
-                userTentor: true
+                userTentor: true,
+                payrollDetails: true
             }
         });
 
@@ -23,12 +24,17 @@ const getData = async (req:Request, res:Response) => {
         let newTotal:number=0
         let number:number=1
         for (const value of data) {
+            let totalStudent:number=0;
+            for (const valueDetail of value.payrollDetails) {
+                totalStudent+=parseInt(valueDetail.totalStudent+'')
+            };
             newData=[
                 ...newData,
                 [
                     number,
                     value.userTentor?.name,
-                    value.month,
+                    moment(value.month).format('DD-MM-YYYY'),
+                    totalStudent,
                     parseFloat(value.basicSalary+'').toLocaleString('id-id'),
                     parseFloat(value.sessionSalary+'').toLocaleString('id-id'),
                     parseFloat(value.total+'').toLocaleString('id-id')
@@ -41,7 +47,7 @@ const getData = async (req:Request, res:Response) => {
         newData=[
             ...newData,
             [
-                'Total','','','',parseFloat(newTotal+'').toLocaleString('id-id')
+                '','Total','','','','',parseFloat(newTotal+'').toLocaleString('id-id')
             ]
         ]
         res.status(200).json({

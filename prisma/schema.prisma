@@ -14,6 +14,8 @@ model classMaster {
   code        String?       @db.VarChar(15)
   name        String        @db.VarChar(25)
   classTypeId String        @db.VarChar(36)
+  quantity    Int?
+  price       Int?
   method      class_method? @default(online)
   description String?       @db.VarChar(50)
   userCreate  String?       @db.VarChar(36)
@@ -63,6 +65,7 @@ model courses {
   materials    materials[]
   recordMateri recordMateri[]
   schedules    schedules[]
+  tentorSkills tentorSkills[]
 
   @@index([majorId], map: "majorId")
   @@index([userCreate], map: "userCreate")
@@ -147,17 +150,18 @@ model packages {
 }
 
 model payrollDetails {
-  id         String     @id @default(uuid()) @db.VarChar(36)
-  payrollId  String?    @db.VarChar(36)
-  scheduleId String?    @db.VarChar(36)
-  price      Decimal?   @db.Decimal(14, 4)
-  userCreate String?    @db.VarChar(36)
-  createdAt  DateTime?  @default(now()) @db.DateTime(0)
-  updatedAt  DateTime?  @default(now()) @db.DateTime(0)
-  deletedAt  DateTime?  @db.DateTime(0)
-  payrolls   payrolls?  @relation(fields: [payrollId], references: [id], onDelete: Cascade, map: "payrolldetails_ibfk_1")
-  schedules  schedules? @relation(fields: [scheduleId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "payrolldetails_ibfk_2")
-  users      users?     @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "payrolldetails_ibfk_3")
+  id           String     @id @default(uuid()) @db.VarChar(36)
+  payrollId    String?    @db.VarChar(36)
+  scheduleId   String?    @db.VarChar(36)
+  price        Decimal?   @db.Decimal(14, 4)
+  totalStudent Int?
+  userCreate   String?    @db.VarChar(36)
+  createdAt    DateTime?  @default(now()) @db.DateTime(0)
+  updatedAt    DateTime?  @default(now()) @db.DateTime(0)
+  deletedAt    DateTime?  @db.DateTime(0)
+  payrolls     payrolls?  @relation(fields: [payrollId], references: [id], onDelete: Cascade, map: "payrolldetails_ibfk_1")
+  schedules    schedules? @relation(fields: [scheduleId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "payrolldetails_ibfk_2")
+  users        users?     @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "payrolldetails_ibfk_3")
 
   @@index([payrollId], map: "payrollId")
   @@index([scheduleId], map: "scheduleId")
@@ -170,7 +174,7 @@ model payrolls {
   basicSalary                      Decimal?         @db.Decimal(14, 4)
   sessionSalary                    Decimal?         @db.Decimal(14, 4)
   total                            Decimal?         @db.Decimal(14, 4)
-  month                            String?          @db.VarChar(7)
+  month                            DateTime?        @db.Date
   userCreate                       String?          @db.VarChar(36)
   createdAt                        DateTime?        @default(now()) @db.DateTime(0)
   updatedAt                        DateTime?        @default(now()) @db.DateTime(0)
@@ -250,6 +254,7 @@ model registers {
   updatedAt      DateTime?                @default(now()) @db.DateTime(0)
   deletedAt      DateTime?                @db.DateTime(0)
   invoiceStatus  registers_invoiceStatus? @default(pending)
+  isModule       Int?                     @db.SmallInt
   students       students?                @relation(fields: [studentId], references: [id], onDelete: Cascade, map: "registers_ibfk_1")
   classMaster    classMaster?             @relation(fields: [classId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_2")
   sessions       sessions?                @relation(fields: [sessionId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "registers_ibfk_4")
@@ -478,9 +483,11 @@ model tentorSkills {
   deletedAt                            DateTime? @db.DateTime(0)
   users_tentorSkills_tentorIdTousers   users?    @relation("tentorSkills_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Cascade, map: "tentorskills_ibfk_1")
   users_tentorSkills_userCreateTousers users?    @relation("tentorSkills_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "tentorskills_ibfk_2")
+  courses                              courses?  @relation(fields: [courseId], references: [id], onDelete: Restrict, map: "tentorskills_ibfk_3")
 
   @@index([tentorId], map: "tentorId")
   @@index([userCreate], map: "userCreate")
+  @@index([courseId], map: "courseId")
 }
 
 model universities {

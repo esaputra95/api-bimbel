@@ -327,19 +327,20 @@ const checkSchedule = async (req:Request, res:Response) => {
     try {
         let status=false;
         const param = req.body
-        const end = moment(param.date).add(60, 'minutes')
-        const start = moment(param.date).subtract(60, 'minutes')
+        const end = moment(param.date).add(90, 'minutes')
+        const start = moment(param.date).subtract(90, 'minutes')
 
         const schedule = await Model.schedules.findMany({
             where: {
                 date:{
-                    lte: new Date(moment(end).format()),
-                    gte: new Date(moment(start).format())
+                    lte: moment(end).format(),
+                    gte: moment(start).format()
                 },
                 tentorId: param.tentorId,
-                roomId: param.roomId
+                roomId: param.roomId,
+                courseId: param.courseId
             }
-        })
+        });
         
         if(param.tentorId){
             const tentorNotAvailable = await Model.tentorNotAvailable.findMany({
@@ -353,7 +354,7 @@ const checkSchedule = async (req:Request, res:Response) => {
                     tentorId: param.tentorId
                 }
             });
-            if(tentorNotAvailable.length>0) status
+            if(tentorNotAvailable.length>0) status=true
         }
         
         

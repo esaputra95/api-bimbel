@@ -6,7 +6,6 @@ const getData = async (req:Request, res:Response) => {
     try {
         const body = req.body;
         let filter:any={}
-        console.log('detail : ', body.tentor);
         
         if(res.locals.userType === "admin"){
             body.tentor ? filter={...filter, tentorId: body.tentor} : null;
@@ -56,7 +55,7 @@ const getData = async (req:Request, res:Response) => {
                         ...event,
                         {
                             id: valueSchedule.id,
-                            title: `${valueSchedule.tentor.name} | ${valueSchedule.studyGroups.name}`,
+                            title: `${valueSchedule.tentor.name} | ${valueSchedule.studyGroups.name} | ${valueSchedule.courses?.name}`,
                             start: moment(valueSchedule.date).tz("Asia/Jakarta").format(),
                             end: moment(valueSchedule.date).tz("Asia/Jakarta").add(90,'minutes').format(),
                             resourceId: valueSchedule.roomId

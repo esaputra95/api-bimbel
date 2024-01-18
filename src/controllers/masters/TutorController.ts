@@ -5,6 +5,9 @@ import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { ClassTypeQueryInterface } from "#root/interfaces/masters/ClassTypeInterface";
 import { UserQueryInterface } from "#root/interfaces/UserInterface";
+import bcrypt from "bcrypt";
+import { TutorQueryInterface } from "#root/interfaces/masters/TutorTypeInterface";
+import moment from "moment";
 
 const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response) => {
     try {
@@ -63,13 +66,14 @@ const postData = async (req:Request, res:Response) => {
     try {
         let data = { ...req.body};        
         delete data.tentorSkills;
-
+        const salt = await bcrypt.genSalt()
+        data.password = await bcrypt.hash(data.password, salt)
         const create = await Model.users.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
         if(create){
             for (const value of req.body.tentorSkills) {
                 await Model.tentorSkills.create({
                     data: {
-                        courseId: value.courseId?.value ?? '',
+                        courseId: value.course?.value ?? '',
                         description: value.description,
                         tentorId: create.id
                     }
@@ -98,13 +102,44 @@ const postData = async (req:Request, res:Response) => {
 
 const updateData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
-        await Model.users.update({
+        let data = { ...req.body};        
+        delete data.tentorSkills;
+        if(!data.password){
+            delete data.password
+        }else{
+            const salt = await bcrypt.genSalt()
+            data.password = await bcrypt.hash(data.password, salt)
+        }
+        const create = await Model.users.update({
+            data: {...data},
             where: {
-                id: req.params.id
-            },
-            data: data
+                id: data.id
+            }
         });
+        if(create){
+            for (const value of req.body.tentorSkills) {
+                if(value.id){
+                    await Model.tentorSkills.update({
+                        data: {
+                            courseId: value.course?.value ?? '',
+                            description: value.description,
+                            tentorId: create.id
+                        },
+                        where: {
+                            id: value.id
+                        }
+                    })
+                }else{
+                    await Model.tentorSkills.create({
+                        data: {
+                            courseId: value.course?.value ?? '',
+                            description: value.description,
+                            tentorId: create.id
+                        }
+                    })
+                }
+            }
+        }
         res.status(200).json({
             status: true,
             message: 'successful in updated user data'
@@ -228,11 +263,80 @@ const getDataSelect = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, r
     }
 }
 
+const getDataSelectSchedule = async (req:Request<{}, {}, {}, TutorQueryInterface>, res:Response) => {
+    try {
+        const query = req.query
+        const end = moment(query.date).add(90, 'minutes')
+        const start = moment(query.date).subtract(90, 'minutes')
+        const model = await Model.users.findMany({
+            where: {
+                name: {
+                    contains: query.name
+                },
+                tentorSkills: {
+                    some: {
+                        courseId: query.courseId
+                    }
+                },
+                schedules_schedules_tentorIdTousers: {
+                    none: {
+                            date: {
+                                lte: moment(end).format(),
+                                gte: moment(start).format()
+                            }
+                        
+                    }
+                },
+                tentorNotAvailable_tentorNotAvailable_tentorIdTousers: {
+                    none: {
+                        startDate: {
+                            lte: new Date(moment(query.date).format())
+                        },
+                        untilDate: {
+                            gte: new Date(moment(query.date).format())
+                        },
+                    }
+                }
+            }
+        });
+        
+        let response:any=[]
+        for (const value of model){
+            response=[...response, {
+                value: value.id,
+                label: value.name
+            }]
+        }
+        res.status(200).json({
+            status: true,
+            message: 'successfully in get user data',
+            data: {
+                tutor: response
+            }
+        })
+    } catch (error) {
+        let message = {
+            status:500,
+            message: { msg: `${error}` }
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            message =  await handleValidationError(error)
+        }
+        res.status(message.status).json({
+            status: false,
+            errors: [
+                message.message
+            ]
+        })
+    }
+}
+
 export {
     getData,
     postData,
     updateData,
     deleteData,
     getDataById,
-    getDataSelect
+    getDataSelect,
+    getDataSelectSchedule
 }

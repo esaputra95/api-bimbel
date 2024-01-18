@@ -293,6 +293,7 @@ const getDataSelect = async (req:Request<{}, {}, {}, RegisterQueryInterface>, re
     }
 }
 
+
 const uploadImage = async (req:Request, res:Response) => {
     res.status(200).json({
         code:1,
