@@ -19,13 +19,15 @@ import {
     Course,
     Material,
     Tutor,
-    Student
+    Student,
+    Profile
 } from "./routers/masters";
 import { 
     Register,
     RegisterFromAdmin 
 } from "./routers/registers";
 import { 
+    ExcelToJson,
     GuidanceType,
     Package,
     SchoolYear,
@@ -40,9 +42,14 @@ import {
 } from "./routers/schedules";
 import { RecordMateri } from "./routers/recordMateri";
 import { PayrollRoute } from "./routers/payroll";
-import { PayrollReportRoute, RecordMateriReportRoute, RegisterReportController, ScheduleReportController, StudentReportRoute } from "./routers/reports";
+import { 
+    PayrollReportRoute,
+    RecordMateriReportRoute,
+    RegisterReportController,
+    ScheduleReportController,
+    StudentReportRoute
+} from "./routers/reports";
 import { DashboardRoute } from "./routers/dashboard";
-import upload from "./helpers/uploadImage";
 
 const app = express()
 app.use(cors());
@@ -50,7 +57,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/auth', login)
+app.use('/excel', ExcelToJson)
 app.use('/users', AccessToken, user)
+app.use('/profiles', AccessToken, Profile)
 app.use('/class-masters', AccessToken, classMaster)
 app.use('/class-types', AccessToken,  classType)
 // app.use('/guidance-types', AccessToken, guidanceType)
@@ -86,4 +95,4 @@ app.use('/images', express.static('src/images'));
 
 app.use('/dashboard', AccessToken, DashboardRoute)
 
-app.listen(3000, ()=> console.log('server run ip 127.0.0.1:3000'))
+app.listen(3001, ()=> console.log('server run ip 127.0.0.1:3000'))
