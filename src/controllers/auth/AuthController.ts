@@ -39,3 +39,27 @@ export const Login = async (req:Request, res:Response) => {
         })
     }
 }
+
+export const forgotPassword = async (req:Request, res:Response) => {
+    try {
+        const data = await Model.users.findFirst({
+            where: {
+                email: req.body.email
+            }
+        });
+        if(!data) throw new Error('Email not found')
+        res.status(200).json({
+            status: true
+        })
+    } catch (error) {
+        console.log({error});
+        res.status(500).json({
+            status: false,
+            message: "email",
+            error: {
+                displayMessage: "email not found"
+            }
+        })
+        
+    }
+}

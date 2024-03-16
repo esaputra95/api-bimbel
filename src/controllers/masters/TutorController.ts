@@ -121,7 +121,7 @@ const updateData = async (req:Request, res:Response) => {
                 if(value.id){
                     await Model.tentorSkills.update({
                         data: {
-                            courseId: value.course?.value ?? '',
+                            courseId: value.courseId ?? '',
                             description: value.description,
                             tentorId: create.id
                         },
