@@ -89,7 +89,7 @@ const postData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Resp
                 studyGroupId: schedule?.studyGroupId ?? null,
                 date: new Date(moment(time[index].date).format()),
                 tentorId: time[index].tentorId,
-                roomId: '123123',
+                roomId: time[index].roomId,
                 type: time[index].type as Type,
                 courseId: time[index].courseId,
                 method: schedule.method,
