@@ -5,7 +5,7 @@ export interface ScheduleInterface {
     studyGroupId?: string
     date: Date
     tentorId: string
-    roomId?: string | null
+    roomId?: string
     type: Type | null
     courseId: string | null
     method: 'online' | 'offline' | null
