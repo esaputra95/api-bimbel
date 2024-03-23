@@ -339,7 +339,7 @@ model schedules {
   scheduleDetails                   scheduleDetails[]
   studyGroups                       studyGroups?       @relation(fields: [studyGroupId], references: [id], onUpdate: Restrict, map: "schedules_ibfk_1")
   tentor                            users             @relation("schedules_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Cascade, map: "schedules_ibfk_2")
-  rooms                             rooms?            @relation(fields: [roomId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "schedules_ibfk_4")
+  rooms                             rooms?            @relation(fields: [roomId], references: [id])
   users_schedules_userCreateTousers users?            @relation("schedules_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "schedules_ibfk_5")
   courses                           courses?          @relation(fields: [courseId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "schedules_ibfk_6")
   classTypes                        classTypes?       @relation(fields: [scheduleType], references: [id], onDelete: Restrict, map: "schedules_ibfk_7")
