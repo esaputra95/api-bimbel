@@ -86,10 +86,10 @@ const postData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Resp
 
         for (let index = 0; index < time.length; index++) {
             let dataSchedule:ScheduleInterface = {
-                studyGroupId: schedule.studyGroupId,
+                studyGroupId: schedule?.studyGroupId ?? null,
                 date: new Date(moment(time[index].date).format()),
                 tentorId: time[index].tentorId,
-                roomId: time[index].roomId,
+                roomId: '123123',
                 type: time[index].type as Type,
                 courseId: time[index].courseId,
                 method: schedule.method,

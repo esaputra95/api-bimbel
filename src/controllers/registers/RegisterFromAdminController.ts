@@ -20,6 +20,13 @@ const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Resp
                 contains: query.name
             }
         }} : null
+        query.status ? filter = {...filter, 
+            status: query.status === "active" ? 1 : 0
+        } : null
+
+        query.isModule ? filter = {...filter, 
+            isModule: query.isModule === "send" ? 1 : 0
+        } : null
         if(filter.length > 0){
             filter = {
                 OR: [

@@ -8,7 +8,7 @@ const getData = async (req:Request, res:Response) => {
     try {
         const data = await Model.recordMateri.findMany({
             where: {
-                createdAt: {
+                date: {
                     gte: moment(req.body.data.startDate+' 00:00:00').format(),
                     lte: moment(req.body.data.endDate+' 23:59:00').format(),
                 },
@@ -26,17 +26,30 @@ const getData = async (req:Request, res:Response) => {
         let newData:any=[]
         let number:number=1;
         for (const value of data) {
-            newData=[
-                ...newData,
-                [
-                    number,
-                    value.userTentor?.name,
-                    value.students?.name,
-                    value.materials?.name,
-                    moment(value.date).format('DD/MM/YYYY hh:mm:ss'),
-                    value.description
-                ]
-            ];
+            if(req.body.data?.student?.value){
+                newData=[
+                    ...newData,
+                    [
+                        number,
+                        value.userTentor?.name,
+                        value.materials?.name,
+                        moment(value.date).format('DD/MM/YYYY hh:mm'),
+                        value.description
+                    ]
+                ];
+            }else{
+                newData=[
+                    ...newData,
+                    [
+                        number,
+                        value.userTentor?.name,
+                        value.students?.name,
+                        value.materials?.name,
+                        moment(value.date).format('DD/MM/YYYY hh:mm'),
+                        value.description
+                    ]
+                ];
+            }
             number++
         } 
         res.status(200).json({

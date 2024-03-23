@@ -2,10 +2,10 @@ import { OptionSelectInterface } from "../GlobalInterface"
 
 export interface ScheduleInterface {
     id?: string
-    studyGroupId: string
+    studyGroupId?: string
     date: Date
     tentorId: string
-    roomId: string | null
+    roomId?: string | null
     type: Type | null
     courseId: string | null
     method: 'online' | 'offline' | null

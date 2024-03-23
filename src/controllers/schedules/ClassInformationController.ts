@@ -55,7 +55,7 @@ const getData = async (req:Request, res:Response) => {
                         ...event,
                         {
                             id: valueSchedule.id,
-                            title: `${valueSchedule.tentor.name} | ${valueSchedule.studyGroups.name} | ${valueSchedule.courses?.name}`,
+                            title: `${valueSchedule.tentor.name} | ${valueSchedule?.studyGroups?.name ?? '' } | ${valueSchedule.courses?.name}`,
                             start: moment(valueSchedule.date).tz("Asia/Jakarta").format(),
                             end: moment(valueSchedule.date).tz("Asia/Jakarta").add(90,'minutes').format(),
                             resourceId: valueSchedule.roomId

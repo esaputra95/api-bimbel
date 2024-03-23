@@ -55,7 +55,7 @@ const getRecordMateri = async ({}, res:Response) => {
                             ...scheduleDetail[index],
                             date: value.date,
                             materiId: value?.courseId,
-                            studyGroupName: value.studyGroups.name
+                            studyGroupName: value.studyGroups?.name ?? ''
                         }
                     ]
                 }
@@ -139,7 +139,7 @@ const getTotalRecordMateri = async (res:Response) => {
                             ...scheduleDetail[index],
                             date: value.date,
                             materiId: value?.courseId,
-                            studyGroupName: value.studyGroups.name
+                            studyGroupName: value.studyGroups?.name ?? ''
                         }
                     ]
                 }

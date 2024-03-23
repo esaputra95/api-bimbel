@@ -12,5 +12,7 @@ export interface RegisterInterface {
 
 export interface RegisterQueryInterface extends RegisterInterface {
     limit: string,
-    page: string
+    page: string,
+    status?: string,
+    isModule?: string,
 }
