@@ -6,14 +6,14 @@ export interface ScheduleInterface {
     date: Date
     tentorId: string
     roomId?: string
-    type: Type | null
-    courseId: string | null
-    method: 'online' | 'offline' | null
+    type: Type
+    courseId: string
+    method?: 'online' | 'offline' | null
     scheduleType: string;
-    userCreate: string | null
-    createdAt?: Date | null
-    updatedAt?: Date | null
-    deletedAt?: Date | null
+    userCreate: string
+    createdAt?: Date
+    updatedAt?: Date
+    deletedAt?: Date
 }
 
 export enum Type {
