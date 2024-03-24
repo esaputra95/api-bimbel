@@ -78,14 +78,26 @@ const getData = async (req:Request<{}, {}, {}, StudyGroupQueryInterface>, res:Re
 
 const postData = async (req:Request<{}, {}, StudyGroupPostInterface, {}>, res:Response) => {
     try {
-        const data = req.body.studyGroup;
-        const dataStudyGroup = req.body.studyGroupDetails
+        const dataStudyGroup = req.body.studyGroup;
+        let dataStudyGroupDetail:any = [];
+        for (const value of req.body.studyGroupDetails) {
+            dataStudyGroupDetail=[
+                ...dataStudyGroupDetail,
+                {
+                    studentId: value.studentId
+                }
+            ]
+        }
         await Model.studyGroups.create({
             data: {
-                ...data,
+                id: dataStudyGroup.id,
+                classId: dataStudyGroup.classId,
+                guidanceTypeId: dataStudyGroup.guidanceTypeId,
+                name: dataStudyGroup.name,
+                total: dataStudyGroup.total,
                 studyGroupDetails: {
                     create: [
-                        ...dataStudyGroup
+                        ...dataStudyGroupDetail
                     ]
                 }
             },
