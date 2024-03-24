@@ -109,26 +109,39 @@ const postData = async (req:Request<{}, {}, StudyGroupPostInterface, {}>, res:Re
     }
 }
 
-const updateData = async (req:Request, res:Response) => {
+const updateData = async (req:Request<{}, {}, StudyGroupPostInterface, {}>, res:Response) => {
     try {
-        const data = { 
-            ...req.body,
-            startDate: moment(req.body.startDate).format(),
-            untilDate: moment(req.body.untilDate).format(),
-        };
-        delete data.tentor
-        delete data.userTentor
+        const dataStudyGroup = req.body.studyGroup
+        const dataStudyGroupDetail = req.body.studyGroupDetails
         await Model.studyGroups.update({
             where: {
-                id: req.params.id
+                id: dataStudyGroup.id
             },
-            data: data
+            data: {
+                id: dataStudyGroup.id,
+                classId: dataStudyGroup.classId,
+                guidanceTypeId: dataStudyGroup.guidanceTypeId,
+                name: dataStudyGroup.name,
+                total: dataStudyGroup.total
+            },
         });
+        for (const value of dataStudyGroupDetail) {
+            await Model.studyGroupDetails.update({
+                where:{
+                    id: value.id
+                },
+                data: {
+                    studentId: value.studentId,
+                }
+            })
+        }
         res.status(200).json({
             status: true,
             message: 'successful in updated Study Group data'
         })
     } catch (error) {
+        console.log({error});
+        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

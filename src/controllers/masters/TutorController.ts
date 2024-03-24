@@ -28,7 +28,7 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         }
         const data = await Model.users.findMany({
             where: {
-                userType: 'tentor',
+                // userType: 'tentor',
                 ...filter
             },
         })
