@@ -102,7 +102,7 @@ const postData = async (req:Request, res:Response) => {
 
 const updateData = async (req:Request, res:Response) => {
     try {
-        let data = { ...req.body};        
+        let data = { ...req.body};  
         delete data.tentorSkills;
         if(!data.password){
             delete data.password
@@ -118,10 +118,12 @@ const updateData = async (req:Request, res:Response) => {
         });
         if(create){
             for (const value of req.body.tentorSkills) {
+                console.log('cours :',value.course);
+                
                 if(value.id){
                     await Model.tentorSkills.update({
                         data: {
-                            courseId: value.courseId ?? '',
+                            courseId: value.course?.value ? value.course?.value : value.courseId,
                             description: value.description,
                             tentorId: create.id
                         },

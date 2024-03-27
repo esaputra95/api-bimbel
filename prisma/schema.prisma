@@ -483,7 +483,7 @@ model tentorSkills {
   deletedAt                            DateTime? @db.DateTime(0)
   users_tentorSkills_tentorIdTousers   users?    @relation("tentorSkills_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Cascade, map: "tentorskills_ibfk_1")
   users_tentorSkills_userCreateTousers users?    @relation("tentorSkills_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "tentorskills_ibfk_2")
-  courses                              courses?  @relation(fields: [courseId], references: [id], onDelete: Restrict, map: "tentorskills_ibfk_3")
+  courses                              courses?  @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "tentorskills_ibfk_3")
 
   @@index([tentorId], map: "tentorId")
   @@index([userCreate], map: "userCreate")
