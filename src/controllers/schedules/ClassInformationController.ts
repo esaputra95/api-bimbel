@@ -95,7 +95,7 @@ const getData = async (req:Request, res:Response) => {
                     ...event,
                     {
                         id: data[i].id,
-                        title: data[i].tentor.name,
+                        title: `${data[i].tentor.name} | ${data[i]?.studyGroups?.name ?? '' } | ${data[i].courses?.name}`,
                         start: moment(data[i].date).tz('Asia/Jakarta').format(),
                         end: moment(data[i].date).tz('Asia/Jakarta').add(90, 'minutes').format(),
                         resourceId: '123'
