@@ -31,6 +31,9 @@ const getData = async (req:Request, res:Response) => {
                 courses: true,
                 studyGroups: true,
                 classTypes: true,
+            },
+            orderBy: {
+                date: 'asc'
             }
         });
 
