@@ -128,37 +128,12 @@ const postData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Resp
     }
 }
 
-const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Response) => {
+const updateData = async (req:Request<{id:string}, {}, SchedulePostInterface, {}>, res:Response) => {
     try {
         const time = req.body.time
         const schedule = req.body.schedule;
         const scheduleDetail = req.body.scheduleDetails;
-        const idDelete = req.body.idDeleteScheduleDetails
-
-        let scheduleDetailUpdate:any=[]
-        let scheduleDetailCreate:any=[]
-        for (let index = 0; index < scheduleDetail.length; index++) {
-            if(scheduleDetail[index].id){
-                scheduleDetailUpdate=[...scheduleDetailUpdate,
-                    {
-                        where: {
-                            id: scheduleDetail[index].id
-                        },
-                        data: {
-                            id: scheduleDetail[index].id,
-                            studentId: scheduleDetail[index].studentId
-                        }
-                    }
-                ];
-            }else {
-                scheduleDetailCreate=[...scheduleDetailCreate,
-                    {
-                        studentId: scheduleDetail[index].studentId,
-                        scheduleId: schedule.id
-                    }
-                ]
-            }
-        }
+        const idDelete = req.body.idDeleteSessionDetails
         
         for (let index = 0; index < time.length; index++) {
             let dataSchedule:ScheduleInterface = {
@@ -175,9 +150,6 @@ const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Re
             await Model.schedules.update({
                 data: {
                     ...dataSchedule,
-                    scheduleDetails:{
-                        update: scheduleDetailUpdate
-                    }
                 },
                 where: {
                     id: schedule.id
@@ -185,19 +157,36 @@ const updateData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Re
             })
         }
 
-        // Add new record id exist
-        await Model.scheduleDetails.createMany({
-            data: scheduleDetailCreate
-        })
+        for (let index = 0; index < scheduleDetail.length; index++) {
+            if(scheduleDetail[index].id){
+                await Model.scheduleDetails.update({
+                    data: {
+                        studentId: scheduleDetail[index].studentId
+                    }, where: {
+                        id: scheduleDetail[index].id
+                    }
+                })
+            }else {
+                await Model.scheduleDetails.create({
+                    data:{
+                        scheduleId: req.params.id,
+                        studentId: scheduleDetail[index].studentId
+                    }
+                })
+            }
+        }
+        
 
         const dataDelete: any[] = idDelete?.map(value => value.id);
-        await Model.scheduleDetails.deleteMany({
-            where: {
-                id: {
-                    in: dataDelete
+        if(dataDelete?.length>0){
+            await Model.scheduleDetails.deleteMany({
+                where: {
+                    id: {
+                        in: dataDelete
+                    }
                 }
-            }
-        })
+            })
+        }
         
         res.status(200).json({
             status: true,

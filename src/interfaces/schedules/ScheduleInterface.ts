@@ -45,7 +45,7 @@ export interface SchedulePostInterface {
     schedule : ScheduleForm;
     scheduleDetails: ScheduleDetailForm[];
     time: TimeScheduleForm[];
-    idDeleteScheduleDetails: Delete[]
+    idDeleteSessionDetails: Delete[]
 }
 
 interface Delete {
