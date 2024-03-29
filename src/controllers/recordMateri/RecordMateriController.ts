@@ -75,6 +75,8 @@ const postData = async (req:Request, res:Response) => {
         let data = { ...req.body};
         if(res.locals.userType!=="admin"){
             data.tentorId = res.locals.userId
+        }else{
+            data.tentorId = data.tentor.value
         }
         const detail = data.detail ?? []
         for (let index = 0; index < detail.length; index++) {
@@ -85,7 +87,8 @@ const postData = async (req:Request, res:Response) => {
                 description: detail[index].description,
                 advice: detail[index].advice,
                 scheduleDetailId: detail[index].scheduleDetailId,
-                tentorId: data.tentorId
+                tentorId: data.tentorId,
+                userCreate: res.locals.userId
             };
             await Model.recordMateri.create({
                 data: dataPost
@@ -353,13 +356,14 @@ const getListStudent = async (req:Request, res:Response) => {
         const query = req.body;
         const date = moment(`${query.date} 00:00:00`).format()
         const date2 = moment(`${query.date2} 23:59:00`).format()
+        const tentorId = res.locals.userType === "admin" ? query.tentorId : res.locals.userId
         const data = await Model.schedules.findMany({
             where: {
                 date: {
                     lte: date2,
                     gte: date
                 },
-                tentorId: res.locals.userId
+                tentorId: tentorId
             },
             include: {
                 scheduleDetails: {
