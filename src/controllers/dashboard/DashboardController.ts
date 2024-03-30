@@ -221,7 +221,7 @@ const getStudyModule = async ({}, res:Response) =>{
     try {
         const data = await Model.registers.findMany({
             where: {
-                isModule: null
+                isModule: 0
             },
             include: {
                 students: true,
@@ -255,10 +255,9 @@ const getTotalStudyModule = async () =>{
     try {
         const total = await Model.registers.count({
             where: {
-                isModule: null
+                isModule: 0
             }
         })
-        
         return total
     } catch (error) {
         return 0
