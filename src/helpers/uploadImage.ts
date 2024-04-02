@@ -3,7 +3,7 @@ import path from 'path';
 
 const imageStorage = multer.diskStorage({
   // Destination to store image
-  destination: path.join(__dirname, '../images'), // Use an absolute path
+  destination: path.join(__dirname, '../public'), // Use an absolute path
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '_' + Date.now() + path.extname(file.originalname));
     // file.fieldname is the name of the field (image)

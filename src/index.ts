@@ -3,6 +3,7 @@ import 'module-alias/register';
 import 'dotenv/config'
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import path from 'path'
 
 import login from './routers/auth/index'
 
@@ -92,8 +93,10 @@ app.use('/report/schedule-reports', AccessToken, ScheduleReportController)
 app.use('/report/register-reports', AccessToken, RegisterReportController)
 app.post('/send-email', sendEmail)
 
-app.use(express.static('public')); 
-app.use('/images', express.static('src/images'));
+// app.use(express.static('public')); 
+// app.use('/images', express.static('src/images'));
+app.use('/static', express.static(path.join(__dirname, '/public')))
+app.use('/images', express.static(path.join(__dirname, '/public')))
 
 app.use('/dashboard', AccessToken, DashboardRoute)
 
