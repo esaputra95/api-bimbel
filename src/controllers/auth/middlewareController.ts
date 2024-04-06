@@ -13,6 +13,7 @@ export interface CustomRequest extends Request {
 
 const AccessToken = (req:Request, res:Response, next:NextFunction) => {
     try {
+        if(req.path === "/select") return next()
         const authHeader = req?.headers?.authorization ?? '';
         if(!authHeader) res.send(403)
         const token = authHeader.split(" ")[1]??false;
