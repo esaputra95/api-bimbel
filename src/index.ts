@@ -54,13 +54,27 @@ import { DashboardRoute } from "./routers/dashboard";
 import { sendEmail } from "./controllers/helper/SendEmailController";
 
 const app = express()
-app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://app.espbimbel.com',
-        'http://app.espbimbel.com',
-    ]
-}));
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://app.espbimbel.com',
+    'http://app.espbimbel.com',
+];
+
+const corsOptions = {
+    origin: function(origin:any, callback:any) {
+        // Periksa apakah origin ada dalam daftar asal yang diizinkan
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true); // Izinkan akses
+        } else {
+            callback(new Error('Origin not allowed by CORS')); // Tolak akses
+        }
+    }
+};
+
+  // Gunakan middleware CORS
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
