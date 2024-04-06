@@ -54,7 +54,12 @@ import { DashboardRoute } from "./routers/dashboard";
 import { sendEmail } from "./controllers/helper/SendEmailController";
 
 const app = express()
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://app.espbimbel.com'
+    ]
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
