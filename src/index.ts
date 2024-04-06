@@ -57,7 +57,8 @@ const app = express()
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://app.espbimbel.com'
+        'https://app.espbimbel.com',
+        'http://app.espbimbel.com',
     ]
 }));
 app.use(bodyParser.json());
