@@ -8,7 +8,7 @@ const getData = async (req:Request, res:Response) => {
     try {
         const data = await Model.payrolls.findMany({
             where: {
-                createdAt: {
+                month: {
                     gte: moment(req.body.data.startDate+' 00:00:00').format(),
                     lte: moment(req.body.data.endDate+' 23:59:00').format(),
                 },

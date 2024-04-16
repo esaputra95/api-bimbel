@@ -76,14 +76,13 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 const postData = async (req:Request, res:Response) => {
     try {
         const data = req.body;
-
         let dataPayroll = {
             userId: data.userId,
             userCreate: res.locals.userId,
             basicSalary: data.basicSalary.replace(/,/g, ""),
             sessionSalary: data.sessionSalary.replace(/,/g, ""),
             total: data.total.replace(/,/g,""),
-            month: moment(data.month+'-01').format()
+            month: moment(data.month+'-01 23:59:00').format()
         }
 
         let dataPayrollDetails:any = [];
@@ -251,6 +250,17 @@ const getDataById = async (req:Request, res:Response) => {
 
 const getDataPayrollSession = async (req:Request, res:Response) => {
     try {
+        const check = await Model.payrolls.findFirst({
+            where: {
+                month: {
+                    gte: moment(req.body.month).startOf('month').format(),
+                    lte: moment(req.body.month).endOf('month').format()
+                },
+                userId: req.body.tentorId
+            }
+        });
+        if(check) throw new Error("Payroll data has been generated");
+        
         const schedule = await Model.schedules.findMany({
             where: {
                 tentorId: req.body.tentorId+'',

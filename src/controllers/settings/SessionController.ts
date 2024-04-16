@@ -181,6 +181,9 @@ const getDataSelect = async (req:Request<{}, {}, {}, SessionQueryInterface>, res
                 name: {
                     contains: query.name
                 }
+            },
+            orderBy: {
+                quantity:'asc'
             }
         })
         let response:any=[]
