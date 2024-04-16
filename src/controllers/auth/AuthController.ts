@@ -7,11 +7,15 @@ import { LoginInterface } from "#root/interfaces/AuthInterface";
 export const Login = async (req:Request, res:Response) => {
     try {
         const data:LoginInterface = req.body
+        console.log({data});
+        
         const user = await Model.users.findFirst({
             where: {
                 username: data.username
             }
         });
+        console.log({user});
+        
         if(!user) throw new Error('Username or password incorrect')
         const match = await bcrypt.compare(data.password, user.password ?? '')
         if(!match) throw new Error('Username or password incorrect')
