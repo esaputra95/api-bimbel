@@ -1,5 +1,6 @@
 import { errorType } from "#root/helpers/errorType"
 import { handleValidationError } from "#root/helpers/handleValidationError"
+import { StudentInterface } from "#root/interfaces/masters/StudentInterface"
 import Model from "#root/services/PrismaService"
 import { Prisma } from "@prisma/client"
 import { Request, Response } from "express"
@@ -85,14 +86,31 @@ const postData = async (req:Request, res:Response) => {
     }
 }
 
-const updateData = async (req:Request, res:Response) => {
+const updateData = async (req:Request<StudentInterface, {}, StudentInterface , {}>, res:Response) => {
     try {
         const data = { ...req.body};
         await Model.students.update({
             where: {
                 id: req.params.id
             },
-            data: data
+            data: {
+                name: data.name,
+                studyProgram: data.studyProgram,
+                phone: data.phone,
+                school: data.school,
+                placeBirth: data.placeBirth,
+                dateBirth: data.dateBirth,
+                address: data.address,
+                gender: data.gender,
+                email: data.email,
+                classGrade: data.classGrade,
+                university: data.university,
+                country: data.country,
+                province: data.province,
+                city: data.city,
+                parentName: data.parentName,
+                parentPhone: data.parentPhone
+            }
         });
         res.status(200).json({
             status: true,

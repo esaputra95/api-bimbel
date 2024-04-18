@@ -7,7 +7,6 @@ import { LoginInterface } from "#root/interfaces/AuthInterface";
 export const Login = async (req:Request, res:Response) => {
     try {
         const data:LoginInterface = req.body
-        console.log({data});
         
         const user = await Model.users.findFirst({
             where: {
