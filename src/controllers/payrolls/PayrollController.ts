@@ -276,7 +276,12 @@ const getDataPayrollSession = async (req:Request, res:Response) => {
                     },
                     
                 },
-                classTypes: true
+                classTypes: true,
+                studyGroups: {
+                    include: {
+                        classMaster: true
+                    }
+                }
             }
         });
         let payrollData:any=[]
@@ -304,6 +309,7 @@ const getDataPayrollSession = async (req:Request, res:Response) => {
                         time: moment(value.date).format('DD-MM-YYYY'),
                         type: value.classTypes?.name,
                         price: classMaster?.price,
+                        class: value.studyGroups?.classMaster?.name??'',
                         totalStudent: total
                     }
                 ];

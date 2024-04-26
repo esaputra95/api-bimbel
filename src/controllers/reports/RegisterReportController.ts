@@ -11,6 +11,7 @@ const getData = async (req:Request, res:Response) => {
         body.course ? filter = {...filter, courseId: body.course?.value} : null;
         body.room ? filter = {...filter, roomId: body.room?.value} : null;
         body.scheduleType ? filter = {...filter, scheduleType: body.scheduleType?.value} : null;
+        body.student ? filter = {...filter, studentId: body.student?.value} : null;
         const data = await Model.registers.findMany({
             where: {
                 createdAt: {
