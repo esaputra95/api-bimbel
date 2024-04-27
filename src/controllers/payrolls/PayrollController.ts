@@ -297,7 +297,7 @@ const getDataPayrollSession = async (req:Request, res:Response) => {
             if(total){
                 const classMaster = await Model.classMaster.findFirst({
                     where: {
-                        classTypeId: value.scheduleType??'',
+                        classTypeId: value.studyGroups?.classMaster?.classTypeId??'',
                         quantity: total
                     }
                 });
@@ -309,7 +309,7 @@ const getDataPayrollSession = async (req:Request, res:Response) => {
                         time: moment(value.date).format('DD-MM-YYYY'),
                         type: value.classTypes?.name,
                         price: classMaster?.price,
-                        class: value.studyGroups?.classMaster?.name??'',
+                        className: value.studyGroups?.name,
                         totalStudent: total
                     }
                 ];

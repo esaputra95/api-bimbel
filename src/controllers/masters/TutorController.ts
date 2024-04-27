@@ -272,9 +272,9 @@ const getDataSelectSchedule = async (req:Request<{}, {}, {}, TutorQueryInterface
         const start = moment(query.date).subtract(90, 'minutes')
         const model = await Model.users.findMany({
             where: {
-                // name: {
-                //     contains: query.name
-                // },
+                name: {
+                    contains: query.name
+                },
                 tentorSkills: {
                     some: {
                         courseId: query.courseId
