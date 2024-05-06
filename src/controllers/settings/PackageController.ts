@@ -66,12 +66,16 @@ const getData = async (req:Request<{}, {}, {}, PackageQueryInterface>, res:Respo
 const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
+        console.log(res.locals.userId);
+        
         await Model.packages.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
         res.status(200).json({
             status: true,
             message: 'successfully in created class type data'
         })
     } catch (error) {
+        console.log({error});
+        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

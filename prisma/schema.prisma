@@ -324,7 +324,7 @@ model schedules {
   id                                String            @id @default(uuid()) @db.VarChar(36)
   studyGroupId                      String?            @db.VarChar(36)
   date                              DateTime          @db.DateTime(0)
-  tentorId                          String            @db.VarChar(36)
+  tentorId                          String?            @db.VarChar(36)
   roomId                            String?           @db.VarChar(36)
   type                              schedules_type?   @default(study)
   courseId                          String?           @db.VarChar(36)
@@ -338,7 +338,7 @@ model schedules {
   payrollDetails                    payrollDetails[]
   scheduleDetails                   scheduleDetails[]
   studyGroups                       studyGroups?       @relation(fields: [studyGroupId], references: [id], onUpdate: Restrict, map: "schedules_ibfk_1")
-  tentor                            users             @relation("schedules_tentorIdTousers", fields: [tentorId], references: [id], onDelete: Cascade, map: "schedules_ibfk_2")
+  tentor                            users?             @relation("schedules_tentorIdTousers", fields: [tentorId], references: [id])
   rooms                             rooms?            @relation(fields: [roomId], references: [id])
   users_schedules_userCreateTousers users?            @relation("schedules_userCreateTousers", fields: [userCreate], references: [id], onUpdate: SetNull, map: "schedules_ibfk_5")
   courses                           courses?          @relation(fields: [courseId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "schedules_ibfk_6")
