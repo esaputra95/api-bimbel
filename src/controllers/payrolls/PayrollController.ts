@@ -352,7 +352,12 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                                 recordMateri: true,
                             }
                         },
-                        classTypes: true
+                        classTypes: true,
+                        studyGroups: {
+                            include: {
+                                classMaster: true
+                            }
+                        }
                     }
                 },
                 guidanceTypes: true,
@@ -368,7 +373,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     }
                 }
             }
-        })
+        });
         
         let newData:any=[]
         let total:number=0;
@@ -382,7 +387,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
             for (const val of value.schedules) {
                 detail= {
                     ...detail,
-                    price: parseFloat(val.classTypes?.price+'') ,
+                    price: parseFloat(val.studyGroups?.classMaster?.price+'') ,
                     studentTotal: val.scheduleDetails.length
                 }
                 for (const v of val.scheduleDetails) {

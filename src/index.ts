@@ -56,8 +56,8 @@ import { sendEmail } from "./controllers/helper/SendEmailController";
 const app = express()
 
 const allowedOrigins = [
-    'http://localhost:5173',
-    'http://localhost:5173/',
+    'http://localhost:5174',
+    'http://localhost:5174/',
     'https://app.espbimbel.com',
     'https://app.espbimbel.com/',
     'http://app.espbimbel.com',
