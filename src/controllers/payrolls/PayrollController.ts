@@ -374,6 +374,12 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                 }
             }
         });
+
+        const pay = await Model.payrolls.findUnique({
+            where: {
+                id: req.params.id
+            }
+        })
         
         let newData:any=[]
         let total:number=0;
@@ -384,7 +390,8 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                 price:0,
                 studentTotal:0
             };
-            for (const val of value.schedules) {
+            const sch = value.schedules.filter(e=> e.tentorId ===  pay?.userId)
+            for (const val of sch) {
                 detail= {
                     ...detail,
                     price: parseFloat(val.studyGroups?.classMaster?.price+'') ,
