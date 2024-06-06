@@ -71,13 +71,16 @@ const postData = async (req:Request, res:Response) => {
         const create = await Model.users.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
         if(create){
             for (const value of req.body.tentorSkills) {
-                await Model.tentorSkills.create({
+                if(value.course?.value){
+                    await Model.tentorSkills.create({
                     data: {
                         courseId: value.course?.value ?? '',
                         description: value.description,
                         tentorId: create.id
                     }
                 })
+                }
+                
                     
             }
         }
