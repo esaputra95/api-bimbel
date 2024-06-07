@@ -11,6 +11,7 @@ const getData = async (req:Request, res:Response) => {
         body.course ? filter = {...filter, courseId: body.course?.value} : null;
         body.room ? filter = {...filter, roomId: body.room?.value} : null;
         body.tentor ? filter = {...filter, tentorId: body.tentor?.value} : null;
+        body.studyGroup ? filter = {...filter, studyGroupId: body.studyGroup?.value} : null;
         body.student ? filter = {...filter, scheduleDetails: {
             some: {
                 studentId: body.student?.value

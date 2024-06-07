@@ -244,6 +244,13 @@ const getDataById = async (req:Request, res:Response) => {
         const model = await Model.schedules.findUnique({
             where: {
                 id: req.params.id
+            },
+            include: {
+                studyGroups: {
+                    include: {
+                        classMaster: true
+                    }
+                },
             }
         });
         const detail = await Model.scheduleDetails.findMany({
