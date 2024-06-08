@@ -47,7 +47,7 @@ const getData = async (req:Request, res:Response) => {
                     number,
                     value.tentor?.name,
                     value.studyGroups?.name ?? '',
-                    moment(value.date).tz('Asia/Jakarta').format('DD-MM-YYYY hh:mm:ss'),
+                    moment(value.date).tz('Asia/Jakarta').format('DD-MM-YYYY HH:mm:ss'),
                     value.courses?.name,
                     value.rooms?.name,
                     value.type==="study" ? "Belajar" : "Try Out",
