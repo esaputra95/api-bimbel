@@ -33,7 +33,7 @@ const getData = async (req:Request, res:Response) => {
                         number,
                         value.userTentor?.name,
                         value.materials?.name,
-                        moment(value.date).format('DD/MM/YYYY hh:mm'),
+                        moment(value.date).format('DD/MM/YYYY HH:mm'),
                         value.description
                     ]
                 ];
@@ -45,7 +45,7 @@ const getData = async (req:Request, res:Response) => {
                         value.userTentor?.name,
                         value.students?.name,
                         value.materials?.name,
-                        moment(value.date).format('DD/MM/YYYY hh:mm'),
+                        moment(value.date).format('DD/MM/YYYY HH:mm'),
                         value.description
                     ]
                 ];
