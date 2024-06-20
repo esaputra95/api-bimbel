@@ -38,7 +38,7 @@ const getData = async (req:Request, res:Response) => {
                         number,
                         value.userTentor?.name,
                         value.materials?.name,
-                        moment(value.scheduleDetails?.schedules?.date).format('DD/MM/YYYY HH:mm'),
+                        moment(value.scheduleDetails?.schedules?.date).format('YYYY-MM-DD HH:mm'),
                         value.description
                     ]
                 ];
@@ -50,17 +50,59 @@ const getData = async (req:Request, res:Response) => {
                         value.userTentor?.name,
                         value.students?.name,
                         value.materials?.name,
-                        moment(value.scheduleDetails?.schedules?.date).format('DD/MM/YYYY HH:mm'),
+                        moment(value.scheduleDetails?.schedules?.date).format('YYYY-MM-DD HH:mm'),
                         value.description
                     ]
                 ];
             }
             number++
-        } 
+        };
+        // SORT DATA 
+        newData.sort((a:any, b:any) => {
+            let date1:any
+            let date2:any
+            if(req.body.data?.student?.value || req.body.data?.tentor?.value){
+                date1 = new Date(a[3]);
+                date2 = new Date(b[3]);
+            }else{
+                date1 = new Date(a[4]);
+                date2 = new Date(b[4]);
+            }
+            return date1 - date2;
+        });
+
+        // FORMAT DATE
+        let finalData:any=[]
+        for (let index = 0; index < newData.length; index++) {
+            if(req.body.data?.student?.value || req.body.data?.tentor?.value){
+                finalData=[
+                    ...finalData,
+                    [
+                        newData[index][0],
+                        newData[index][1],
+                        newData[index][2],
+                        moment(newData[index][3]).format('DD/MM/YYYY HH:mm'),
+                        newData[index][4],
+                    ]
+                ]
+            }else{
+                finalData=[
+                    ...finalData,
+                    [
+                        newData[index][0],
+                        newData[index][1],
+                        newData[index][2],
+                        newData[index][3],
+                        moment(newData[index][4]).format('DD/MM/YYYY HH:mm'),
+                        newData[index][5],
+                    ]
+                ]
+            }
+        }
         res.status(200).json({
             status: true,
             message: 'successfully in get record material data',
-            data: newData
+            data: finalData
         })
     } catch (error) {
         let message = {

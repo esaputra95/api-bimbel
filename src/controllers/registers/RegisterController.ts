@@ -91,7 +91,6 @@ const postData = async (req:Request, res:Response) => {
             parentName: data.parentName,
             parentPhone: data.parentPhone,
             image: data.image,
-            userCreate: res.locals.userId
         }
         const student = await Model.students.create({
             data: studentData
@@ -101,8 +100,7 @@ const postData = async (req:Request, res:Response) => {
             studentId: student.id,
             sessionId: data.sessionId.value,
             packageId: data.packageId.value,
-            guidanceTypeId: data.guidanceType.value,
-            userCreate: res.locals.userId
+            guidanceTypeId: data.guidanceType.value
         }
 
         await Model.registers.create({

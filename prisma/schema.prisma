@@ -411,10 +411,7 @@ model students {
   recordMateri      recordMateri[]
   registers         registers[]
   scheduleDetails   scheduleDetails[]
-  users             users?                @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "students_ibfk_1")
   studyGroupDetails studyGroupDetails[]
-
-  @@index([userCreate], map: "userCreate")
 }
 
 model studyGroupDetails {
@@ -561,7 +558,6 @@ model users {
   schedules_schedules_userCreateTousers                   schedules[]          @relation("schedules_userCreateTousers")
   schoolYears                                             schoolYears[]
   sessions                                                sessions[]
-  students                                                students[]
   studyGroupDetails                                       studyGroupDetails[]
   studyGroups                                             studyGroups[]
   tentorNotAvailable_tentorNotAvailable_tentorIdTousers   tentorNotAvailable[] @relation("tentorNotAvailable_tentorIdTousers")
