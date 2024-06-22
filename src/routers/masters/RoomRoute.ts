@@ -5,7 +5,8 @@ import {
     getDataById,
     getDataSelect,
     postData,
-    updateData
+    updateData,
+    getDataSelectSchedule
 } from "#controllers/masters/RoomController"
 import validationMessage from "#root/validations/Validate";
 import RoomValidation from "#root/validations/masters/RoomValidation";
@@ -15,6 +16,7 @@ route.get('/', getData);
 route.post('/',  validationMessage(RoomValidation), postData);
 route.put('/:id', validationMessage(RoomValidation), updateData);
 route.delete('/:id', deleteData);
+route.get('/select-schedule', getDataSelectSchedule);
 route.get('/select', getDataSelect);
 route.get('/:id', getDataById);
 

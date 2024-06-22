@@ -13,5 +13,6 @@ export interface RoomInterface {
 
 export interface RoomQueryInterface extends RoomInterface {
     limit: string,
-    page: string
+    page: string,
+    date: string
 }

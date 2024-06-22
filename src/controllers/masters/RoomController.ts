@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { RoomQueryInterface } from "#root/interfaces/RoomInterface";
+import moment from "moment";
 
 const getData = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Response) => {
     try {
@@ -210,11 +211,68 @@ const getDataSelect = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Re
     }
 }
 
+const getDataSelectSchedule = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Response) => {
+    try {
+        const query = req.query
+        const end = moment(query.date).add(90, 'minutes')
+        const start = moment(query.date).subtract(90, 'minutes')
+        const model = await Model.rooms.findMany({
+            where: {
+                name: {
+                    contains: query.name
+                },
+                schedules: {
+                    none: {
+                        date: {
+                            lte: moment(end).format(),
+                            gte: moment(start).format()
+                        }
+                    }
+                }
+            },
+            orderBy: {
+                code: 'asc'
+            }
+        });
+        
+        let response:any=[]
+        for (const value of model){
+            response=[...response, {
+                value: value.id,
+                label: value.name
+            }]
+        }
+        
+        res.status(200).json({
+            status: true,
+            message: 'successfully in get Room data',
+            data: {
+                tutor: response
+            }
+        })
+    } catch (error) {
+        let message = {
+            status:500,
+            message: { msg: `${error}` }
+        }
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            message =  await handleValidationError(error)
+        }
+        res.status(message.status).json({
+            status: false,
+            errors: [
+                message.message
+            ]
+        })
+    }
+}
+
 export {
     getData,
     postData,
     updateData,
     deleteData,
     getDataById,
-    getDataSelect
+    getDataSelect,
+    getDataSelectSchedule
 }
