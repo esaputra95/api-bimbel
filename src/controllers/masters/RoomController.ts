@@ -214,8 +214,8 @@ const getDataSelect = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Re
 const getDataSelectSchedule = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Response) => {
     try {
         const query = req.query
-        const end = moment(query.date).add(90, 'minutes')
-        const start = moment(query.date).subtract(90, 'minutes')
+        const end = moment(query.date).add(89, 'minutes')
+        const start = moment(query.date).subtract(89, 'minutes')
         const model = await Model.rooms.findMany({
             where: {
                 name: {

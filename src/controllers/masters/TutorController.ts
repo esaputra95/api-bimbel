@@ -271,8 +271,8 @@ const getDataSelect = async (req:Request<{}, {}, {}, ClassTypeQueryInterface>, r
 const getDataSelectSchedule = async (req:Request<{}, {}, {}, TutorQueryInterface>, res:Response) => {
     try {
         const query = req.query
-        const end = moment(query.date).add(90, 'minutes')
-        const start = moment(query.date).subtract(90, 'minutes')
+        const end = moment(query.date).add(89, 'minutes')
+        const start = moment(query.date).subtract(89, 'minutes')
         const model = await Model.users.findMany({
             where: {
                 name: {
