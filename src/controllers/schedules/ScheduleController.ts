@@ -327,8 +327,8 @@ const checkSchedule = async (req:Request, res:Response) => {
     try {
         let status=false;
         const param = req.body
-        const end = moment(param.date).add(90, 'minutes')
-        const start = moment(param.date).subtract(90, 'minutes')
+        const end = moment(param.date).add(89, 'minutes')
+        const start = moment(param.date).subtract(89, 'minutes')
 
         const schedule = await Model.schedules.findMany({
             where: {
