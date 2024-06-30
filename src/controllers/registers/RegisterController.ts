@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { RegisterQueryInterface } from "#root/interfaces/registers/RegisterInterface";
+import moment from "moment";
 
 const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Response) => {
     try {
@@ -95,56 +96,32 @@ const postData = async (req:Request, res:Response) => {
         const student = await Model.students.create({
             data: studentData
         });
+        const schoolYear = await Model.schoolYears.findFirst({
+            where: {
+                startYear: {
+                    lte: moment().format()
+                },
+                endYear: {
+                    gte: moment().format()
+                }
+            }
+        })
 
         const registerData = {
             studentId: student.id,
             sessionId: data.sessionId.value,
             packageId: data.packageId.value,
-            guidanceTypeId: data.guidanceType.value
+            guidanceTypeId: data.guidanceType.value,
+            schoolYearId: schoolYear?.id ?? ''
         }
 
         await Model.registers.create({
             data: registerData
         })
-
-        // await Model.$transaction(async (model)=>{
-        //     const student = await model.students.create({
-        //         data: studentData
-        //     });
-
-        //     const registerData = {
-        //         university: data.university,
-        //         amount: 0
-        //     }
-
-        //     await Model.registers.create({
-        //         data: {
-        //             amount: 0,
-        //             students: {
-        //                 connect: {id: student.id}
-        //             },
-        //             sessions: {
-        //                 connect: {id: data.sessionId.value}
-        //             },
-        //             packages: {
-        //                 connect: {id: data.packageId.value}
-        //             },
-        //             guidanceTypes: {
-        //                 connect: {id: data.guidanceType.value}
-        //             },
-        //             schoolYears: {
-        //                 connect: {id: '4a95e7b8-494a-4799-9014-76f54aa1bf1c'}
-        //             },
-        //             users: {
-        //                 connect: {id: res.locals.userId}
-        //             }
-        //         }
-        //     });
-        // })
         
         res.status(200).json({
             status: true,
-            message: 'successfully in created class type data'
+            message: 'successfully in created register data'
         })
     } catch (error) {
         
