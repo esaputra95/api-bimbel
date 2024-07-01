@@ -94,7 +94,9 @@ const postData = async (req:Request, res:Response) => {
             image: data.image,
         }
         const student = await Model.students.create({
-            data: studentData
+            data: {
+                ...studentData
+            }
         });
         const schoolYear = await Model.schoolYears.findFirst({
             where: {
@@ -112,11 +114,14 @@ const postData = async (req:Request, res:Response) => {
             sessionId: data.sessionId.value,
             packageId: data.packageId.value,
             guidanceTypeId: data.guidanceType.value,
-            schoolYearId: schoolYear?.id ?? ''
+            schoolYearId: schoolYear?.id ?? '',
+            location: data.location
         }
 
         await Model.registers.create({
-            data: registerData
+            data: {
+                ...registerData
+            }
         })
         
         res.status(200).json({
