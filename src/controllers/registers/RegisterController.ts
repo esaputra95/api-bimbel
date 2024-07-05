@@ -5,6 +5,7 @@ import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { RegisterQueryInterface } from "#root/interfaces/registers/RegisterInterface";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Response) => {
     try {
@@ -74,6 +75,7 @@ const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
         const studentData = {
+            id: uuidv4(),
             name: data.name,
             email: data.email,
             studyProgram: data.studyProgram,
@@ -110,6 +112,7 @@ const postData = async (req:Request, res:Response) => {
         })
 
         const registerData = {
+            id: uuidv4(),
             studentId: student.id,
             sessionId: data.sessionId.value,
             packageId: data.packageId.value,

@@ -10,6 +10,7 @@ import {
     ScheduleQueryInterface,
     Type
 } from "#root/interfaces/schedules/ScheduleInterface";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, ScheduleQueryInterface>, res:Response) => {
     try {
@@ -88,6 +89,7 @@ const postData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Resp
 
         for (let index = 0; index < time.length; index++) {
             let dataSchedule:any = {
+                id: uuidv4(),
                 studyGroupId: schedule?.studyGroupId ?? null,
                 date: new Date(moment(time[index].date).format()),
                 tentorId: time[index].tentorId,

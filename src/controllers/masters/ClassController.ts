@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import Model from "#root/services/PrismaService";
 import { Request, Response } from "express";
 import { Prisma } from "@prisma/client";
@@ -63,7 +64,8 @@ const getData = async (req:Request<{}, {}, {}, ClassMasterQueryInterface>, res:R
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        const id = uuidv4()
+        const data = { ...req.body, id: id};
         await Model.classMaster.create({data: data});
         res.status(200).json({
             status: true,

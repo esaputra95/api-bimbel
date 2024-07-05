@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { TentorNotAvailableQueryInterface} from "#root/interfaces/schedules/TentorNotAvailableInterface";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, TentorNotAvailableQueryInterface>, res:Response) => {
     try {
@@ -83,7 +84,13 @@ const postData = async (req:Request, res:Response) => {
             untilDate: moment(req.body.untilDate).format(),
         };
         delete data.tentor
-        await Model.tentorNotAvailable.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
+        await Model.tentorNotAvailable.create({
+            data: {
+                ...data, 
+                userCreate: res?.locals?.userId ?? '', 
+                id: uuidv4()
+            }
+        });
         res.status(200).json({
             status: true,
             message: 'successfully in created Tentor Not Available data'

@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { CourseQueryInterface } from "#root/interfaces/masters/CourseInterface";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, CourseQueryInterface>, res:Response) => {
     try {
@@ -67,7 +68,8 @@ const getData = async (req:Request<{}, {}, {}, CourseQueryInterface>, res:Respon
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        const id = uuidv4()
+        const data = { ...req.body, id: id};
         await Model.courses.create({data: data});
         res.status(200).json({
             status: true,

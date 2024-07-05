@@ -5,6 +5,7 @@ import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { RoomQueryInterface } from "#root/interfaces/RoomInterface";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Response) => {
     try {
@@ -61,7 +62,8 @@ const getData = async (req:Request<{}, {}, {}, RoomQueryInterface>, res:Response
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        const id = uuidv4();
+        const data = { ...req.body, id: id};
         await Model.rooms.create({data: data});
         res.status(200).json({
             status: true,

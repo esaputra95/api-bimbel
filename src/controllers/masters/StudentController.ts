@@ -4,6 +4,7 @@ import { StudentInterface } from "#root/interfaces/masters/StudentInterface"
 import Model from "#root/services/PrismaService"
 import { Prisma } from "@prisma/client"
 import { Request, Response } from "express"
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request, res:Response) => {
     try {
@@ -65,7 +66,8 @@ const getData = async (req:Request, res:Response) => {
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        const id = uuidv4()
+        const data = { ...req.body, id: id};
         await Model.students.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
         res.status(200).json({
             status: true,

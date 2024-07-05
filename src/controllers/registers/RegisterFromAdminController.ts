@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { RegisterQueryInterface } from "#root/interfaces/registers/RegisterInterface";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Response) => {
     try {
@@ -84,6 +85,7 @@ const postData = async (req:Request, res:Response) => {
     try {
         const data = { ...req.body};
         const registerData = {
+            id: uuidv4(),
             studentId: data.studentId,
             sessionId: data.sessionId,
             packageId: data.packageId,

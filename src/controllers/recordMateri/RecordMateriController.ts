@@ -6,6 +6,7 @@ import { errorType } from "#root/helpers/errorType";
 import { ClassTypeQueryInterface } from "#root/interfaces/masters/ClassTypeInterface";
 import { UserQueryInterface } from "#root/interfaces/UserInterface";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response) => {
     try {
@@ -72,7 +73,8 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 
 const postData = async (req:Request, res:Response) => {
     try {
-        let data = { ...req.body};
+        const id = uuidv4();
+        let data = { ...req.body, id: id};
         if(res.locals.userType!=="admin"){
             data.tentorId = res.locals.userId
         }else{
@@ -81,6 +83,7 @@ const postData = async (req:Request, res:Response) => {
         const detail = data.detail ?? []
         for (let index = 0; index < detail.length; index++) {
             const dataPost = {
+                id: id,
                 date: moment(data.date).format(),
                 studentId: detail[index].studentId,
                 materiId: detail[index].materiId,

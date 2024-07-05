@@ -8,6 +8,7 @@ import { UserQueryInterface } from "#root/interfaces/UserInterface";
 import bcrypt from "bcrypt";
 import { TutorQueryInterface } from "#root/interfaces/masters/TutorTypeInterface";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response) => {
     try {
@@ -64,7 +65,8 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 
 const postData = async (req:Request, res:Response) => {
     try {
-        let data = { ...req.body};        
+        const id = uuidv4()
+        let data = { ...req.body, id: id};        
         delete data.tentorSkills;
         const salt = await bcrypt.genSalt()
         data.password = await bcrypt.hash(data.password, salt)

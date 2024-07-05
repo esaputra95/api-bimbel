@@ -5,6 +5,7 @@ import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { UserQueryInterface } from "#root/interfaces/UserInterface";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response) => {
     try {
@@ -77,6 +78,7 @@ const postData = async (req:Request, res:Response) => {
     try {
         const data = req.body;
         let dataPayroll = {
+            id: uuidv4(),
             userId: data.userId,
             userCreate: res.locals.userId,
             basicSalary: data.basicSalary.replace(/,/g, ""),
@@ -94,7 +96,8 @@ const postData = async (req:Request, res:Response) => {
                     scheduleId: dataDetail[index].scheduleId,
                     price: dataDetail[index].price,
                     userCreate: res.locals.userId,
-                    totalStudent: dataDetail[index].totalStudent
+                    totalStudent: dataDetail[index].totalStudent,
+                    id: uuidv4()
                 }
             ]
         }

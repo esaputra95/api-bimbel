@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { MajorQueryInterface } from "#root/interfaces/masters/MajorInterface";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, MajorQueryInterface>, res:Response) => {
     try {
@@ -63,7 +64,8 @@ const getData = async (req:Request<{}, {}, {}, MajorQueryInterface>, res:Respons
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        const id = uuidv4();
+        const data = { ...req.body, id: id};
         await Model.majors.create({data: data});
         res.status(200).json({
             status: true,
