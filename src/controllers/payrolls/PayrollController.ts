@@ -404,12 +404,13 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     if(v.recordMateri.length>0){
                         time =[
                             ...time,
-                            moment(v.recordMateri[0].date).format('DD')
+                            moment(val.date).format('DD')
                         ];
                         break
                     }
                 }
             }
+            
             total+=detail.price*time.length;
             newData=[
                 ...newData,
@@ -417,7 +418,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     number,
                     value.name,
                     value.guidanceTypes?.name,
-                    time.join(','),
+                    time.join(', '),
                     parseFloat(time.length).toLocaleString('id-id'),
                     parseFloat(detail.price+'').toLocaleString('id-id'),
                     detail.studentTotal,
