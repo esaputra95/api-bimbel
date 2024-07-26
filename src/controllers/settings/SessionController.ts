@@ -4,6 +4,7 @@ import { Prisma } from "@prisma/client";
 import { handleValidationError } from "#root/helpers/handleValidationError";
 import { errorType } from "#root/helpers/errorType";
 import { SessionQueryInterface } from "#root/interfaces/settings/SessionInterface";
+import { v4 as uuidv4 } from 'uuid';
 
 const getData = async (req:Request<{}, {}, {}, SessionQueryInterface>, res:Response) => {
     try {
@@ -64,7 +65,8 @@ const getData = async (req:Request<{}, {}, {}, SessionQueryInterface>, res:Respo
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const data = { ...req.body};
+        const id = uuidv4()
+        const data = { ...req.body, id: id};
         await Model.sessions.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
         res.status(200).json({
             status: true,
@@ -183,7 +185,7 @@ const getDataSelect = async (req:Request<{}, {}, {}, SessionQueryInterface>, res
                 }
             },
             orderBy: {
-                quantity:'asc'
+                name:'asc'
             }
         })
         let response:any=[]
