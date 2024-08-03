@@ -13,5 +13,6 @@ export interface ClassMasterInterface {
 
 export interface ClassMasterQueryInterface extends ClassMasterInterface {
     limit: string,
-    page: string
+    page: string,
+    classType: string
 }

@@ -346,89 +346,62 @@ const getDataPayrollSession = async (req:Request, res:Response) => {
 
 const getPayrollDetail = async (req:Request, res:Response) => {
     try {
-        const data = await Model.studyGroups.findMany({
-            include: {
-                schedules: {
-                    include: {
-                        scheduleDetails: {
-                            include: {
-                                recordMateri: true,
-                            }
-                        },
-                        classTypes: true,
-                        studyGroups: {
-                            include: {
-                                classMaster: true
-                            }
-                        }
-                    }
-                },
-                guidanceTypes: true,
-            },
-            where: {
-                schedules: {
-                    some: {
-                        payrollDetails: {
-                            some: {
-                                payrollId: req.params.id
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        const pay = await Model.payrolls.findUnique({
+        const model = await Model.payrolls.findUnique({
             where: {
                 id: req.params.id
-            }
-        })
-        
-        let newData:any=[]
-        let total:number=0;
-        let number:number=1;
-        for (const value of data) {
-            let time:any=[];
-            let detail={
-                price:0,
-                studentTotal:0
-            };
-            const sch = value.schedules.filter(e=> e.tentorId ===  pay?.userId)
-            for (const val of sch) {
-                detail= {
-                    ...detail,
-                    price: parseFloat(val.studyGroups?.classMaster?.price+'') ,
-                    studentTotal: val.scheduleDetails.length
-                }
-                for (const v of val.scheduleDetails) {
-                    if(v.recordMateri.length>0){
-                        time =[
-                            ...time,
-                            moment(val.date).format('DD')
-                        ];
-                        break
+            },
+            include: {
+                payrollDetails:{
+                    include: {
+                        schedules: {
+                            include: {
+                                scheduleDetails: true,
+                                studyGroups: {
+                                    include: {
+                                        guidanceTypes: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    orderBy: {
+                        schedules: {
+                            studyGroupId: 'asc'
+                        }
                     }
                 }
-            }
-            
-            total+=detail.price*time.length;
-            newData=[
-                ...newData,
-                [ 
-                    number,
-                    value.name,
-                    value.guidanceTypes?.name,
-                    time.join(', '),
-                    parseFloat(time.length).toLocaleString('id-id'),
-                    parseFloat(detail.price+'').toLocaleString('id-id'),
-                    detail.studentTotal,
-                    parseFloat((detail.price*time.length)+'').toLocaleString('id-id'),
-                    ''
+            },
+        });
+        let total=0
+        let newData:any=[]
+        const detail = model?.payrollDetails ?? []
+        let time:any=[]
+        let group:any=''
+        for (let index = 0; index < detail.length; index++) {
+            // const detailTime = detail[index].schedules ?? []
+            if(detail[index].schedules?.studyGroupId===group || group===''){
+                time=[...time, moment(detail[index].schedules?.date).format('DD')]
+            }else{
+                time=[...time, moment(detail[index].schedules?.date).format('DD')]
+                newData=[
+                    ...newData,
+                    [ 
+                        (index+1),
+                        detail[index].schedules?.studyGroups?.name,
+                        detail[index].schedules?.studyGroups?.guidanceTypes?.name,
+                        time.join(','),
+                        1,
+                        detail[index].price,
+                        detail[index].totalStudent,
+                        parseInt(detail[index].price+'')*time.length,
+                        ''
+                    ]
                 ]
-            ]
-            number++
+                time=[]
+            }
+            total+=parseInt(detail[index].price+''??0)
+            group = detail[index].schedules?.studyGroupId;
         }
-
         const basic = await Model.payrolls.findFirst({
             where: {
                 id: req.params.id

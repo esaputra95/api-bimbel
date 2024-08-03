@@ -16,6 +16,7 @@ const getData = async (req:Request<{}, {}, {}, ClassMasterQueryInterface>, res:R
         // FILTER
         let filter:any= []
         query.name ? filter = [...filter, {name: { contains: query.name }}] : null
+        query.classType ? filter = [...filter, {classTypeId: query.classType}] : null
         if(filter.length > 0){
             filter = {
                 OR: [

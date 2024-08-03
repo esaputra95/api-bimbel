@@ -33,10 +33,23 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
             include: {
                 materials: true,
                 students: true,
-                userTentor: true
+                userTentor: true,
+                scheduleDetails:{
+                    include: {
+                        schedules: {
+                            select: {
+                                date: true
+                            }
+                        }
+                    }
+                }
             },
             orderBy: {
-                id: 'asc'
+                scheduleDetails: {
+                    schedules: {
+                        date: 'desc'
+                    }
+                }
             },
             skip: skip,
             take: take
@@ -46,12 +59,24 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
                 ...filter
             }
         })
+
+        let newData:any=[]
+        for (let index = 0; index < data.length; index++) {
+            newData=[
+                ...newData,
+                {
+                    ...data[index],
+                    date: data[index].scheduleDetails?.schedules?.date
+                }
+            ]
+            delete newData.scheduleDetails
+        }
         
         res.status(200).json({
             status: true,
             message: "successfully in getting record material data",
             data: {
-                recordMateri: data,
+                recordMateri: newData,
                 info:{
                     page: page,
                     limit: take,

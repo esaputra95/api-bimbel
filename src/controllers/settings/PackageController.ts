@@ -188,7 +188,7 @@ const getDataSelect = async (req:Request<{}, {}, {}, PackageQueryInterface>, res
                 }
             },
             orderBy: {
-                name: 'asc'
+                name: 'asc',
             }
         })
         let response:any=[]
