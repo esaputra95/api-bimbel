@@ -98,8 +98,7 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
 
 const postData = async (req:Request, res:Response) => {
     try {
-        const id = uuidv4();
-        let data = { ...req.body, id: id};
+        let data = { ...req.body};
         if(res.locals.userType!=="admin"){
             data.tentorId = res.locals.userId
         }else{
@@ -107,6 +106,7 @@ const postData = async (req:Request, res:Response) => {
         }
         const detail = data.detail ?? []
         for (let index = 0; index < detail.length; index++) {
+            const id = uuidv4();
             const dataPost = {
                 id: id,
                 date: moment(data.date).format(),
