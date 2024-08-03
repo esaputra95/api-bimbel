@@ -13,14 +13,14 @@ const getData = async (req:Request, res:Response) => {
         body.tentor ? filter = {...filter, tentorId: body.tentor?.value} : null;
         body.studyGroup ? filter = {...filter, studyGroupId: body.studyGroup?.value} : null;
         body.student ? filter = {...filter, scheduleDetails: {
-            some: {
+            every: {
                 studentId: body.student?.value
             }
         }} : null
         body.scheduleType ? filter = {...filter, scheduleType: body.scheduleType?.value} : null;
         const data = await Model.schedules.findMany({
             where: {
-                createdAt: {
+                date: {
                     gte: moment(body.startDate+' 00:00:00').format(),
                     lte: moment(body.endDate+' 23:59:00').format(),
                 },

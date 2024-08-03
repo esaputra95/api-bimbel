@@ -16,6 +16,7 @@ const getData = async (req:Request, res:Response) => {
         // FILTER
         let filter:any= []
         query.name ? filter = [...filter, {name: { contains: query.name }}] : null
+        query.name ? filter = [...filter, {parentPhone: { contains: query.name }}] : null
         query.code ? filter = [...filter, {code: { contains: query.code }}] : null
         if(filter.length > 0){
             filter = {
