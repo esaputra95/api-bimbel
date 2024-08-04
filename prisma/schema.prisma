@@ -80,6 +80,7 @@ model guidanceTypes {
   createdAt   DateTime?           @default(now()) @db.DateTime(0)
   updatedAt   DateTime?           @default(now()) @db.DateTime(0)
   deletedAt   DateTime?           @db.DateTime(0)
+  number Int?
   users       users?              @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "guidancetypes_ibfk_1")
   registers   registers[]
   studyGroups studyGroups[]
@@ -143,6 +144,7 @@ model packages {
   createdAt   DateTime?   @default(now()) @db.DateTime(0)
   updatedAt   DateTime?   @default(now()) @db.DateTime(0)
   deletedAt   DateTime?   @db.DateTime(0)
+  number  Int?
   users       users?      @relation(fields: [userCreate], references: [id], onUpdate: SetNull, map: "packages_ibfk_1")
   registers   registers[]
 

@@ -28,7 +28,7 @@ const getData = async (req:Request<{}, {}, {}, GuidanceTypeQueryInterface>, res:
                 ...filter
             },
             orderBy: {
-                createdAt: 'desc'
+                number: 'asc'
             },
             skip: skip,
             take: take
@@ -185,7 +185,7 @@ const getDataSelect = async (req:Request<{}, {}, {}, GuidanceTypeQueryInterface>
                 }
             },
             orderBy: {
-                name: 'asc'
+                number: 'asc'
             }
         })
         let response:any=[]

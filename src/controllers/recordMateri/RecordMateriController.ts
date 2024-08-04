@@ -415,7 +415,8 @@ const getListStudent = async (req:Request, res:Response) => {
                         {
                             ...scheduleDetail[indexDetail],
                             materiId: data[index]?.courseId,
-                            studyGroupId: data[index].studyGroupId
+                            studyGroupId: data[index].studyGroupId,
+                            time: moment(data[index].date).format('DD-MM-YYYY hh:mm')
                         }
                     ]
                 }
