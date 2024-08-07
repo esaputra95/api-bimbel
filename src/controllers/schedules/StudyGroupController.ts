@@ -138,22 +138,31 @@ const updateData = async (req:Request<{}, {}, StudyGroupPostInterface, {}>, res:
             },
         });
         for (const value of dataStudyGroupDetail) {
-            await Model.studyGroupDetails.update({
-                where:{
-                    id: value.id
-                },
-                data: {
-                    studentId: value.studentId,
-                }
-            })
+            if(!value.id){
+                await Model.studyGroupDetails.create({
+                    data: {
+                        id: uuidv4(),
+                        studyGroupId: dataStudyGroup.id,
+                        studentId: value.studentId,
+                    }
+                })
+            }else {
+                await Model.studyGroupDetails.update({
+                    where:{
+                        id: value.id
+                    },
+                    data: {
+                        studentId: value.studentId,
+                    }
+                })
+            }
+            
         }
         res.status(200).json({
             status: true,
             message: 'successful in updated Study Group data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
