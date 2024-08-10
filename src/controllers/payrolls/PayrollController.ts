@@ -377,10 +377,28 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         const detail = model?.payrollDetails ?? []
         let time:any=[]
         let group:any=''
+        console.log(detail[0]);
+        
         for (let index = 0; index < detail.length; index++) {
             // const detailTime = detail[index].schedules ?? []
             if(detail[index].schedules?.studyGroupId===group || group===''){
-                time=[...time, moment(detail[index].schedules?.date).format('DD')]
+                time=[...time, moment(detail[index].schedules?.date).format('DD')];
+                if(index===0){
+                    newData=[
+                        ...newData,
+                        [ 
+                            (index+1),
+                            detail[index].schedules?.studyGroups?.name,
+                            detail[index].schedules?.studyGroups?.guidanceTypes?.name,
+                            time.join(','),
+                            1,
+                            detail[index].price,
+                            detail[index].totalStudent,
+                            parseInt(detail[index].price+'')*time.length,
+                            ''
+                        ]
+                    ]
+                }
             }else{
                 time=[...time, moment(detail[index].schedules?.date).format('DD')]
                 newData=[

@@ -219,6 +219,11 @@ const getDataById = async (req:Request, res:Response) => {
         const detail = await Model.studyGroupDetails.findMany({
             where: {
                 studyGroupId: model?.id
+            },
+            orderBy: {
+                studyGroups :{
+                    
+                }
             }
         })
         if(!model) throw new Error('data not found')

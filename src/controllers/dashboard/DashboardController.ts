@@ -36,7 +36,8 @@ const getRecordMateri = async ({}, res:Response) => {
                     select: {
                         name: true
                     }
-                }
+                },
+                tentor: true,
             },
             orderBy: {
                 date: 'asc'
@@ -55,6 +56,9 @@ const getRecordMateri = async ({}, res:Response) => {
                             ...scheduleDetail[index],
                             date: value.date,
                             materiId: value?.courseId,
+                            tutor: {
+                                name: value.tentor?.name
+                            },
                             studyGroupName: value.studyGroups?.name ?? ''
                         }
                     ]

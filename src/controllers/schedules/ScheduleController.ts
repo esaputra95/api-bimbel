@@ -44,7 +44,7 @@ const getData = async (req:Request<{}, {}, {}, ScheduleQueryInterface>, res:Resp
                 ...filter
             },
             orderBy: {
-                createdAt: 'desc'
+                date: 'asc'
             },
             skip: skip,
             take: take
