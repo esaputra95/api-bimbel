@@ -69,7 +69,7 @@ const postData = async (req:Request, res:Response) => {
     try {
         const id = uuidv4()
         const data = { ...req.body, id: id};
-        await Model.students.create({data: {...data, userCreate: res?.locals?.userId ?? ''}});
+        await Model.students.create({data: {...data, dateBirth: new Date(data.dateBirth), userCreate: res?.locals?.userId ?? ''}});
         res.status(200).json({
             status: true,
             message: 'successfully in created student data'
@@ -102,7 +102,7 @@ const updateData = async (req:Request<StudentInterface, {}, StudentInterface , {
                 phone: data.phone,
                 school: data.school,
                 placeBirth: data.placeBirth,
-                dateBirth: data.dateBirth,
+                dateBirth: new Date(data.dateBirth),
                 address: data.address,
                 gender: data.gender,
                 email: data.email,

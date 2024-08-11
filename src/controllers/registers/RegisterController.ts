@@ -82,7 +82,7 @@ const postData = async (req:Request, res:Response) => {
             phone: data.phone,
             school: data.school,
             placeBirth: data.placeBirth,
-            dateBirth: data.dateBirth,
+            dateBirth: new Date(data.dateBirth),
             country: data.country,
             province: data.province,
             city: data.city,
