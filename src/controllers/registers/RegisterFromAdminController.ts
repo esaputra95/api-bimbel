@@ -46,7 +46,7 @@ const getData = async (req:Request<{}, {}, {}, RegisterQueryInterface>, res:Resp
                 guidanceTypes: true
             },
             orderBy: {
-                createdAt: 'desc'
+                createdAt: 'asc'
             },
             skip: skip,
             take: take
