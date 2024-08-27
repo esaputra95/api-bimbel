@@ -13,7 +13,6 @@ export const Login = async (req:Request, res:Response) => {
                 username: data.username
             }
         });
-        console.log({user});
         
         if(!user) throw new Error('Username or password incorrect')
         const match = await bcrypt.compare(data.password, user.password ?? '')
@@ -33,7 +32,6 @@ export const Login = async (req:Request, res:Response) => {
                 }
         })
     } catch (error) {
-        console.log({error});
         
         res.status(404).json({
             status: false,

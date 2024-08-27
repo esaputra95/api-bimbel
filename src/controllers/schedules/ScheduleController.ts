@@ -68,7 +68,6 @@ const getData = async (req:Request<{}, {}, {}, ScheduleQueryInterface>, res:Resp
             }
         })
     } catch (error) {
-        console.log({error});
         
         let message = errorType
         message.message.msg = `${error}`
@@ -118,8 +117,6 @@ const postData = async (req:Request<{}, {}, SchedulePostInterface, {}>, res:Resp
             message: 'successfully in created Schedule data'
         })
     } catch (error) {
-        console.log({error});
-        
         let message = errorType
         message.message.msg = `${error}`
         if (error instanceof Prisma.PrismaClientKnownRequestError) {

@@ -377,7 +377,6 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         const detail = model?.payrollDetails ?? []
         let time:any=[]
         let group:any=''
-        console.log(detail[0]);
         
         for (let index = 0; index < detail.length; index++) {
             // const detailTime = detail[index].schedules ?? []

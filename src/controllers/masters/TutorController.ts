@@ -123,8 +123,6 @@ const updateData = async (req:Request, res:Response) => {
         });
         if(create){
             for (const value of req.body.tentorSkills) {
-                console.log('cours :',value.course);
-                
                 if(value.id){
                     await Model.tentorSkills.update({
                         data: {
