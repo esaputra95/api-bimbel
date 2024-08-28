@@ -73,12 +73,13 @@ const getData = async (req:Request, res:Response) => {
 
         // FORMAT DATE
         let finalData:any=[]
+        let urut:number=1
         for (let index = 0; index < newData.length; index++) {
             if(req.body.data?.student?.value || req.body.data?.tentor?.value){
                 finalData=[
                     ...finalData,
                     [
-                        newData[index][0],
+                        urut,
                         newData[index][1],
                         newData[index][2],
                         moment(newData[index][3]).format('DD/MM/YYYY HH:mm'),
@@ -89,7 +90,7 @@ const getData = async (req:Request, res:Response) => {
                 finalData=[
                     ...finalData,
                     [
-                        newData[index][0],
+                        urut,
                         newData[index][1],
                         newData[index][2],
                         newData[index][3],
@@ -98,6 +99,7 @@ const getData = async (req:Request, res:Response) => {
                     ]
                 ]
             }
+            urut++
         }
         res.status(200).json({
             status: true,

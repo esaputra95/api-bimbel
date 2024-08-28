@@ -30,7 +30,7 @@ const getData = async (req:Request, res:Response) => {
                 ...filter
             },
             orderBy: {
-                name: 'asc'
+                createdAt: 'asc'
             },
             skip: skip,
             take: take

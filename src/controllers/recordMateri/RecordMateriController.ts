@@ -391,7 +391,8 @@ const getListStudent = async (req:Request, res:Response) => {
                     lte: date2,
                     gte: date
                 },
-                tentorId: tentorId
+                tentorId: tentorId,
+                status: 'active'
             },
             include: {
                 scheduleDetails: {
