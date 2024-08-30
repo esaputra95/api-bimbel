@@ -379,10 +379,10 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         let group:any=''
         
         for (let index = 0; index < detail.length; index++) {
-            // const detailTime = detail[index].schedules ?? []
-            if(detail[index].schedules?.studyGroupId===group || group===''){
+            if(detail[index].schedules?.studyGroupId===group || group == ''){
                 time=[...time, moment(detail[index].schedules?.date).format('DD')];
-                if(index===0){
+                
+                if((index+1)===detail.length){
                     newData=[
                         ...newData,
                         [ 
@@ -399,7 +399,6 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     ]
                 }
             }else{
-                time=[...time, moment(detail[index].schedules?.date).format('DD')]
                 newData=[
                     ...newData,
                     [ 
@@ -414,7 +413,8 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                         ''
                     ]
                 ]
-                time=[]
+                time=[];
+                time=[...time, moment(detail[index].schedules?.date).format('DD')];
             }
             total+=parseInt(detail[index].price+''??0)
             group = detail[index].schedules?.studyGroupId;
@@ -449,7 +449,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
             tentor: [
                 [`Nama Tentor : ${basic?.userTentor?.name}`],
                 [`Subject : ${basic?.userTentor?.tentorSkills.map(item=>item.courses?.name)}`],
-                [`Bulan : ${moment(basic?.month+'-01').format('MMMM YYYY')}`],
+                [`Bulan : ${moment(basic?.month).format('MMMM YYYY')}`],
             ]
         })
         
