@@ -386,7 +386,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     newData=[
                         ...newData,
                         [ 
-                            (index+1),
+                            (index),
                             detail[index].schedules?.studyGroups?.name,
                             detail[index].schedules?.studyGroups?.guidanceTypes?.name,
                             time.join(','),
@@ -402,14 +402,14 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                 newData=[
                     ...newData,
                     [ 
-                        (index+1),
-                        detail[index].schedules?.studyGroups?.name,
-                        detail[index].schedules?.studyGroups?.guidanceTypes?.name,
+                        (index),
+                        detail[(index-1)].schedules?.studyGroups?.name,
+                        detail[(index-1)].schedules?.studyGroups?.guidanceTypes?.name,
                         time.join(','),
                         1,
-                        detail[index].price,
-                        detail[index].totalStudent,
-                        parseInt(detail[index].price+'')*time.length,
+                        detail[(index-1)].price,
+                        detail[(index-1)].totalStudent,
+                        parseInt(detail[(index-1)].price+'')*time.length,
                         ''
                     ]
                 ]
