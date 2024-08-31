@@ -415,6 +415,22 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                 ]
                 time=[];
                 time=[...time, moment(detail[index].schedules?.date).format('DD')];
+                if((index+1)===detail.length){
+                    newData=[
+                        ...newData,
+                        [ 
+                            (index+1),
+                            detail[index].schedules?.studyGroups?.name,
+                            detail[index].schedules?.studyGroups?.guidanceTypes?.name,
+                            time.join(','),
+                            1,
+                            detail[index].price,
+                            detail[index].totalStudent,
+                            parseInt(detail[index].price+'')*time.length,
+                            ''
+                        ]
+                    ]
+                }
             }
             total+=parseInt(detail[index].price+''??0)
             group = detail[index].schedules?.studyGroupId;
