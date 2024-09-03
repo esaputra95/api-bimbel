@@ -24,7 +24,7 @@ const getData = async (req:Request, res:Response) => {
                 room=[
                     ...room,
                     {
-                        id: value.id,
+                        id: value.name,
                         title: value.name
                     }
                 ]
@@ -42,6 +42,7 @@ const getData = async (req:Request, res:Response) => {
                     include: {
                         courses: true,
                         tentor: true,
+                        rooms: true,
                         studyGroups: {
                             include: {
                                 guidanceTypes: true
@@ -58,7 +59,7 @@ const getData = async (req:Request, res:Response) => {
                             title: `${valueSchedule.tentor?.name} | ${valueSchedule?.studyGroups?.name ?? '' } | ${valueSchedule.courses?.name}`,
                             start: moment(valueSchedule.date).tz("Asia/Jakarta").format(),
                             end: moment(valueSchedule.date).tz("Asia/Jakarta").add(90,'minutes').format(),
-                            resourceId: valueSchedule.roomId
+                            resourceId: valueSchedule.rooms?.name
                         }
                     ]
                 }
