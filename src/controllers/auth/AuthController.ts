@@ -3,6 +3,7 @@ import Model from "#services/PrismaService";
 import bcrypt from 'bcrypt'
 import { sign } from 'jsonwebtoken';
 import { LoginInterface } from "#root/interfaces/AuthInterface";
+import { sendEmail } from "../helper/SendEmailController";
 
 export const Login = async (req:Request, res:Response) => {
     try {
@@ -63,5 +64,66 @@ export const forgotPassword = async (req:Request, res:Response) => {
             }
         })
         
+    }
+}
+
+export const Verification = async (req:Request, res:Response) => {
+    try {
+        const query = req.query;
+        const user = await Model.users.findFirst({
+            where: {
+                token: query.code+''??''
+            }
+        });
+        
+        if(!user) throw new Error('invalid token') 
+        await Model.users.update({
+            where: {
+                id: user.id
+            },
+            data: {
+                token: null
+            }
+        })
+
+        res.redirect(`${process.env.FE_URL}/auth/login`)
+        
+    } catch (error) {
+        console.log({error})
+    }
+}
+
+export const ForgotPassword = async (req:Request, res:Response) => {
+    try {
+        console.log('data');
+        
+        const salt = await bcrypt.genSalt()
+        const passwordText = Math.random().toString(36).substring(2,7);
+        const passwordHash = await bcrypt.hash(passwordText, salt)
+        const data = await Model.users.updateMany({
+            where:{
+                email: req.body.email
+            },
+            data: {
+                password: passwordHash
+            }
+        });
+
+        console.log({data});
+        
+
+        if(data){
+            await sendEmail(req.body.email, passwordText)
+        }
+
+        res.status(200).json({
+            status: true,
+            message: 'successfully reset password'
+        })
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: `${error}`
+        })
     }
 }

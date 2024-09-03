@@ -1,21 +1,25 @@
 import { Request, Response } from "express"
 import * as nodemailer from "nodemailer";
 
-const sendEmail = (req:Request, res:Response) => {
+const sendEmail = async (email:string, code:string) => {
     try {
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
                 user: "ekosaputra.t.i@gmail.com",
-                pass: "bxdn pgau khtb juig",
+                pass: "eqth ktax wxoa suei",
             },
         });
-          // Define the email options
+        let body:string = ''
+        body=`<body>
+        <p>Reset Password berhasil! ini Password Kamu yang baru ${code}</p>
+        </body>`
         const mailOptions: nodemailer.SendMailOptions = {
             from: "ekosaputra.t.i@gmail.com",
-            to: "usihariyati@gmail.com",
-            subject: "Subject of the email",
-            text: "Body of the email",
+            to: email,
+            subject: "Perifikasi Akun Berbagi",
+            text: ``,
+            html: body,
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -26,6 +30,7 @@ const sendEmail = (req:Request, res:Response) => {
             }
         });
     } catch (error) {
+        console.log({error});
         
     }
 }

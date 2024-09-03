@@ -9,7 +9,7 @@ const getRecordMateri = async ({}, res:Response) => {
         const date = moment().format()
         
         let filter:any={}
-        if(res.locals.userType !== "admin"){
+        if(res.locals.userType !== "admin" && res.locals.userType !== "employee"){
             filter={...filter, tentorId: res.locals.userId}
         }
         const data = await Model.schedules.findMany({
@@ -96,7 +96,7 @@ const getTotalRecordMateri = async (res:Response) => {
         const date = moment().format()
         
         let filter:any={}
-        if(res.locals.userType !== "admin"){
+        if(res.locals.userType !== "admin" && res.locals.userType !== "employee"){
             filter={...filter, tentorId: res.locals.userId}
         }
         const data = await Model.schedules.findMany({
@@ -271,7 +271,7 @@ const getTotalStudyModule = async () =>{
 const getTotalStudentWillFinish = async ({}, res:Response) => {
     try {
         let filter:any={}
-        if(res.locals.userType!=="admin"){
+        if(res.locals.userType !== "admin" && res.locals.userType !== "employee"){
             filter={
                 tentorId: res.locals.userId
             }

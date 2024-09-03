@@ -285,6 +285,9 @@ const getDataPayrollSession = async (req:Request, res:Response) => {
                         classMaster: true
                     }
                 }
+            },
+            orderBy: {
+                date: 'asc'
             }
         });
         let payrollData:any=[]
@@ -373,6 +376,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
             },
         });
         let total=0
+        let totalSession=0
         let newData:any=[]
         const detail = model?.payrollDetails ?? []
         let time:any=[]
@@ -390,13 +394,14 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                             detail[index].schedules?.studyGroups?.name,
                             detail[index].schedules?.studyGroups?.guidanceTypes?.name,
                             time.join(','),
-                            1,
+                            time.length,
                             detail[index].price,
                             detail[index].totalStudent,
                             parseInt(detail[index].price+'')*time.length,
                             ''
                         ]
-                    ]
+                    ];
+                    totalSession+=time.length
                 }
             }else{
                 newData=[
@@ -406,13 +411,14 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                         detail[(index-1)].schedules?.studyGroups?.name,
                         detail[(index-1)].schedules?.studyGroups?.guidanceTypes?.name,
                         time.join(','),
-                        1,
+                        time.length,
                         detail[(index-1)].price,
                         detail[(index-1)].totalStudent,
                         parseInt(detail[(index-1)].price+'')*time.length,
                         ''
                     ]
                 ]
+                totalSession+=time.length
                 time=[];
                 time=[...time, moment(detail[index].schedules?.date).format('DD')];
                 if((index+1)===detail.length){
@@ -423,13 +429,14 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                             detail[index].schedules?.studyGroups?.name,
                             detail[index].schedules?.studyGroups?.guidanceTypes?.name,
                             time.join(','),
-                            1,
+                            time.length,
                             detail[index].price,
                             detail[index].totalStudent,
                             parseInt(detail[index].price+'')*time.length,
                             ''
                         ]
-                    ]
+                    ];
+                    totalSession+=time.length
                 }
             }
             total+=parseInt(detail[index].price+''??0)
@@ -455,7 +462,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         newData=[
             ...newData,
             ['','Gaji Pokok', '', '', '', '','', parseFloat(basic?.basicSalary+'').toLocaleString('id-id'), ''],
-            ['','Total',  '', '', '', '', '', parseFloat((total)+'').toLocaleString('id-id'), ''],
+            ['','Total',  '', '', totalSession, '', '', parseFloat((total)+'').toLocaleString('id-id'), ''],
         ]
 
         res.status(200).json({

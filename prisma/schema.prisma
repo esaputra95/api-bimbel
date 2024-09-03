@@ -617,6 +617,7 @@ enum schedules_method {
 enum users_userType {
   admin
   tentor
+  employee
 }
 
 enum registers_invoiceStatus {

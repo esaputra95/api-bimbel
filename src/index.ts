@@ -114,7 +114,6 @@ app.use('/report/record-materi-reports', AccessToken, RecordMateriReportRoute)
 app.use('/report/student-reports', AccessToken, StudentReportRoute)
 app.use('/report/schedule-reports', AccessToken, ScheduleReportController)
 app.use('/report/register-reports', AccessToken, RegisterReportController)
-app.post('/send-email', sendEmail)
 
 // app.use(express.static('public')); 
 // app.use('/images', express.static('src/images'));
