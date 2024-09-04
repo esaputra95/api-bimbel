@@ -183,10 +183,47 @@ const getDataById = async (req:Request, res:Response) => {
     }
 }
 
+const changePassword = async (req:Request, res:Response) => {
+    try {
+        const data = req.body;
+        const user = await Model.users.findUnique({
+            where: {
+                id: res.locals?.userId 
+            }
+        });
+        const match = await bcrypt.compare(data.password, user?.password ?? '')
+        if(!match) throw new Error('Password incorrect');
+        const salt = await bcrypt.genSalt()
+        const newPassword = await bcrypt.hash(data.newPassword, salt);
+        console.log( res.locals.userId);
+        
+        await Model.users.update({
+            data: {
+                password: newPassword
+            },
+            where: {
+                id: res.locals.userId
+            }
+        })
+        res.status(200).json({
+            status: true,
+            message: 'successfully reset password'
+        })
+    } catch (error) {
+        console.log({error});
+        
+        res.status(500).json({
+            status: false,
+            message: `${error}`
+        })
+    }
+}
+
 export {
     getData,
     postData,
     updateData,
     deleteData,
-    getDataById
+    getDataById,
+    changePassword
 }

@@ -222,6 +222,11 @@ const getDataById = async (req:Request, res:Response) => {
                 payrollDetails:{
                     include: {
                         schedules: true
+                    },
+                    orderBy: {
+                        schedules: {
+                            date: 'asc'
+                        }
                     }
                 }
             }
