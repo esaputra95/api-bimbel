@@ -7,13 +7,13 @@ const getData = async (req:Request, res:Response) => {
         const body = req.body;
         let filter:any={}
         
-        if(res.locals.userType === "admin"){
-            body.tentor ? filter={...filter, tentorId: body.tentor} : null;
-        }else{
+        if(res.locals.userType === "tentor"){
             filter={
                 ...filter,
                 tentorId: res.locals.userId
-            }   
+            } 
+        }else{
+            body.tentor ? filter={...filter, tentorId: body.tentor} : null;
         }
 
         let room:any=[];
