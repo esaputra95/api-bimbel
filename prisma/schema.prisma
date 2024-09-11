@@ -11,8 +11,8 @@ datasource db {
 /// This model has been renamed to 'classMaster' during introspection, because the original name 'class' is reserved.
 model classMaster {
   id          String        @id @default(uuid()) @db.VarChar(36)
-  code        String?       @db.VarChar(15)
-  name        String        @db.VarChar(25)
+  code        String?       @db.VarChar(100)
+  name        String        @db.VarChar(255)
   classTypeId String        @db.VarChar(36)
   quantity    Int?
   price       Int?
