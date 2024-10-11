@@ -19,7 +19,7 @@ const getData = async (req:Request<{}, {}, {}, UserQueryInterface>, res:Response
         let filter:any= {}
         query.studentId ? filter = {...filter, studentId:  query.studentId } : null
 
-        if(res.locals.userType !== "admin"){
+        if(res.locals.userType === "tentor"){
             filter = {
                 ...filter,
                 tentorId: res.locals.userId

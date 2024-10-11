@@ -17,7 +17,7 @@ const sendEmail = async (email:string, code:string) => {
         const mailOptions: nodemailer.SendMailOptions = {
             from: "ekosaputra.t.i@gmail.com",
             to: email,
-            subject: "Perifikasi Akun Berbagi",
+            subject: "Verifikasi Akun KASIR Q",
             text: ``,
             html: body,
         };

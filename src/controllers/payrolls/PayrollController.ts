@@ -386,7 +386,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
         const detail = model?.payrollDetails ?? []
         let time:any=[]
         let group:any=''
-        
+        let nomor=1;
         for (let index = 0; index < detail.length; index++) {
             if(detail[index].schedules?.studyGroupId===group || group == ''){
                 time=[...time, moment(detail[index].schedules?.date).format('DD')];
@@ -395,7 +395,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     newData=[
                         ...newData,
                         [ 
-                            (index),
+                            (nomor),
                             detail[index].schedules?.studyGroups?.name,
                             detail[index].schedules?.studyGroups?.guidanceTypes?.name,
                             time.join(','),
@@ -406,13 +406,14 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                             ''
                         ]
                     ];
+                    nomor++;
                     totalSession+=time.length
                 }
             }else{
                 newData=[
                     ...newData,
                     [ 
-                        (index),
+                        (nomor),
                         detail[(index-1)].schedules?.studyGroups?.name,
                         detail[(index-1)].schedules?.studyGroups?.guidanceTypes?.name,
                         time.join(','),
@@ -423,6 +424,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                         ''
                     ]
                 ]
+                nomor++
                 totalSession+=time.length
                 time=[];
                 time=[...time, moment(detail[index].schedules?.date).format('DD')];
@@ -430,7 +432,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     newData=[
                         ...newData,
                         [ 
-                            (index+1),
+                            (nomor),
                             detail[index].schedules?.studyGroups?.name,
                             detail[index].schedules?.studyGroups?.guidanceTypes?.name,
                             time.join(','),
@@ -441,6 +443,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                             ''
                         ]
                     ];
+                    nomor++
                     totalSession+=time.length
                 }
             }
