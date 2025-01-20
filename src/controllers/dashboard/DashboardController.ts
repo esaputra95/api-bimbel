@@ -15,8 +15,9 @@ const getRecordMateri = async ({}, res:Response) => {
         const data = await Model.schedules.findMany({
             where: {
                 date: {
-                    lte: date
+                    lte: date,
                 },
+                status: 'active',
                 ...filter
             },
             include: {
@@ -41,7 +42,7 @@ const getRecordMateri = async ({}, res:Response) => {
             },
             orderBy: {
                 date: 'asc'
-            }
+            },
         })
 
         let dataDetail:any = [];

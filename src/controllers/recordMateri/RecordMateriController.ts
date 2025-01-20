@@ -384,7 +384,8 @@ const getListStudent = async (req:Request, res:Response) => {
         const query = req.body;
         const date = moment(`${query.date} 00:00:00`).format()
         const date2 = moment(`${query.date2} 23:59:00`).format()
-        const tentorId = res.locals.userType === "admin" ? query.tentorId : res.locals.userId
+        const tentorId = res.locals.userType === "admin" || res.locals.userType === "employee" ? query.tentorId : res.locals.userId
+        
         const data = await Model.schedules.findMany({
             where: {
                 date: {
@@ -405,6 +406,7 @@ const getListStudent = async (req:Request, res:Response) => {
                 date: 'asc'
             }
         })
+
 
         let dataDetail:any = [];
         for (let index = 0; index < data.length; index++) {
