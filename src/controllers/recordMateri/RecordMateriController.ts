@@ -328,7 +328,7 @@ const getStudyGroup = async (req: Request, res: Response) => {
         let filterSchedule: any = {};
         let filterStudyGroup: any = {};
         if (res.locals.userType === "tentor") {
-        filterSchedule = { ...filterSchedule, tentorId: res.locals.userId };
+            filterSchedule = { ...filterSchedule, tentorId: res.locals.userId };
         }
 
         query.name
@@ -336,27 +336,27 @@ const getStudyGroup = async (req: Request, res: Response) => {
         : null;
 
         const data = await Model.studyGroups.findMany({
-        where: {
-            name: {
-            contains: query.name + "",
+            where: {
+                name: {
+                    contains: query.name + "",
+                },
+                schedules: {
+                    some: {
+                        ...filterSchedule,
+                    },
+                },
             },
-            schedules: {
-            some: {
-                ...filterSchedule,
-            },
-            },
-        },
         });
 
         let response: any = [];
         for (const value of data) {
-        response = [
-            ...response,
-            {
-            value: value.id,
-            label: value.name,
-            },
-        ];
+            response = [
+                ...response,
+                {
+                value: value.id,
+                label: value.name,
+                },
+            ];
         }
 
         res.status(200).json({
@@ -399,6 +399,7 @@ const getListStudent = async (req: Request, res: Response) => {
             },
             tentorId: tentorId,
             status: "active",
+            type: 'study',
             scheduleDetails: {
                 some: {
                     recordMateri: { none: {} },
@@ -449,15 +450,15 @@ const getListStudent = async (req: Request, res: Response) => {
         });
     } catch (error) {
         let message = {
-        status: 500,
-        message: { msg: `${error}` },
+            status: 500,
+            message: { msg: `${error}` },
         };
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        message = await handleValidationError(error);
+            message = await handleValidationError(error);
         }
         res.status(message.status).json({
-        status: false,
-        errors: [message.message],
+            status: false,
+            errors: [message.message],
         });
     }
 };

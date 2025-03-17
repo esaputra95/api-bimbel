@@ -221,7 +221,11 @@ const getDataById = async (req:Request, res:Response) => {
             include: {
                 payrollDetails:{
                     include: {
-                        schedules: true
+                        schedules: {
+                            where: {
+                                status: 'active'
+                            }
+                        }
                     },
                     orderBy: {
                         schedules: {
@@ -369,12 +373,16 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                                         guidanceTypes: true
                                     }
                                 }
+                            },
+                            where:{
+                                status: 'active',
+                                type: 'study'
                             }
                         }
                     },
                     orderBy: {
                         schedules: {
-                            studyGroupId: 'asc'
+                            studyGroupId: 'asc',
                         }
                     }
                 }
@@ -447,7 +455,7 @@ const getPayrollDetail = async (req:Request, res:Response) => {
                     totalSession+=time.length
                 }
             }
-            total+=parseInt(detail[index].price+''??0)
+            total+=Number(detail[index]?.price??0)
             group = detail[index].schedules?.studyGroupId;
         }
         const basic = await Model.payrolls.findFirst({

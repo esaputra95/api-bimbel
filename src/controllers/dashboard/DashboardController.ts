@@ -18,6 +18,7 @@ const getRecordMateri = async ({}, res:Response) => {
                     lte: date,
                 },
                 status: 'active',
+                type: 'study',
                 ...filter
             },
             include: {
@@ -105,6 +106,8 @@ const getTotalRecordMateri = async (res:Response) => {
                 date: {
                     lte: date
                 },
+                status: 'active',
+                type:'study',
                 ...filter
             },
             include: {
