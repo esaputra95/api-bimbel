@@ -62,6 +62,10 @@ const allowedOrigins = [
     'https://app.espbimbel.com/',
     'http://app.espbimbel.com',
     'http://app.espbimbel.com/',
+    'https://web.espbimbel.com/',
+    'https://web.espbimbel.com',
+    'http://web.espbimbel.com/',
+    'http://web.espbimbel.com'
 ];
 
 const corsOptions = {
@@ -122,4 +126,4 @@ app.use('/images', express.static(path.join(__dirname, '/public')))
 
 app.use('/dashboard', AccessToken, DashboardRoute)
 
-app.listen(3001, ()=> console.log('server run ip 127.0.0.1:3000'))
+app.listen(3002, ()=> console.log('server run ip 127.0.0.1:3000'))
